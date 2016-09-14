@@ -6,28 +6,55 @@ export default class CreateRoom extends React.Component {
 	constructor(props) {
 		super(props)
 	}
-
 	componentWillMount() {
-		socket.on('enterRoom', function() {
-		//	window.Animal = animalName;
-			window.location.href = '#/drawing'
-		  //redirect to countdown view
+		var currentRoom;
+		socket.on('enterRoom', function(roomName) {
+			window.roomName = roomName;
+			window.location.href = '#/drawing';
 		});
+		socket.on('joined', function(didJoin, roomName, canvas) {
+			if (didJoin) {
+				window.roomName = roomName;
+				window.location.href = '#/drawing';
+				window.canvas = canvas;
+			} else {
+				console.log('That room does not exist');
+			}
+		})
 	}
 
-	start(host) {
-		socket.emit('ready', host);
+	
+	startSession(host) {
+		socket.emit('createRoom', host);
+		document.getElementById('roomTitle').value = '';
+	}
+
+	joinRoom(roomName) {
+		socket.emit('joinRoom', roomName);
+		document.getElementById('roomTitle').value = '';
 	}
 
 	render() {
 		return (
 		<div className="readyScreen valign">
-			<h1 className="tlt"> Create Rooom Session </h1>
-
-			<input type="text" id="hostTitle" placeholder="Title here..." />Title:
-			<input id="hostVideo" type="text" placeholder="Video here..." />Video URL:
-			<input id="hostName" type="text" placeholder="Name here..." />Name:
-			<button className="btn waves-effect waves-light" value="Press this button when everyone is in" onClick={() => {var host = {title: document.getElementById('hostTitle').value, videoUrl: document.getElementById('hostVideo').value, name: document.getElementById('hostName').value}; this.start(host);}}>Start a session!!</button>
+			<div>
+				<h3 className="tlt">Join Room</h3>
+				<input type="text" 
+				       id="roomTitle" 
+					   placeholder="Room to join..." />
+				<button onClick={() => {var room = document.getElementById('roomTitle').value; this.joinRoom(room);}}>
+					Join a room
+				</button>
+			</div>
+			<div>
+				<h3 className="tlt"> Create Rooom Session </h3>
+				<input type="text" id="hostTitle" placeholder="Title here..." />
+				<button 
+					className="btn waves-effect waves-light"
+					onClick={() => {var title = document.getElementById('hostTitle').value; this.startSession(title)}}>
+					Create a room
+				</button>
+			</div>
 		</div>
 	)}
 }

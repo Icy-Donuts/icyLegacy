@@ -1,70 +1,46 @@
 import React from 'react'
 
-//Used to render a board that we can draw on
-// var Board = () => (
-// 	<div>
-// 		<canvas id="canvas" width="375" height="375"></canvas>
-// 		</div>
-// 	)
-
 export default class Drawing extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-		 	canvas: ''
+			canvas: '',
+		 	room: ''
 		}
+	}
+	componentWillMount() {
+	 	this.setState({room: window.roomName, canvas: window.canvas});
+		// socket.emit('pathAdded', this.state.room);
 	}
 
 	componentDidMount() {
-		console.log('did component mount??')
-		 var canvas = new fabric.Canvas('canvas', {
-		  	  isDrawingMode: true,
-		  });
-		 canvas.freeDrawingBrush.width = 10;
-		 this.setState({canvas: canvas});
+		var self = this.state;
+		var canvas = new fabric.Canvas('canvas', {
+			isDrawingMode: true,
+		});
+		canvas.loadFromJSON(self.canvas, canvas.renderAll.bind(canvas));
+		canvas.freeDrawingBrush.width = 10;
+		canvas.on('path:created', function(e) {
+			socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(canvas), self.room);
+		});
+		socket.on('updateCanvas', function(svg) {
+			console.log('drawsss');
+			fabric.util.enlivenObjects([svg], function(objects) {
+				objects.forEach(function(o){
+					canvas.add(o);
+				})
+			})
+		})
 	}
-	// 	// this.state.canvas = new fabric.Canvas('canvas', {
-	// 	//  	  isDrawingMode: true,
-	// 	// 	});
-	// 	// this.state.canvas.freeDrawingBrush.width = 10;
-	// 	// this.setState({
-	// 	// 	canvas: canvas
-	// 	// });
-
-
-
-
-	// 	// socket.on('end', function () {
-	// 	//   console.log('drawing ended');
-	// 	//   var node = document.getElementsByClassName('drawingWrapper')[0]
-	// 	//   this.triggerMouseEvent(node, 'mouseup')
-	// 	//   image = JSON.stringify(canvas);
-	// 	//   canvas.clear();
-	// 	//   socket.removeListener('end');
-	// 	// }.bind(this));
-
-	// }
 
 	endSession() {
-		socket.emit('disconnect');
+		socket.emit('disconnect', this.state.room);
 	}
-
-  draw() {
-  	socket.emit('draw', JSON.stringify(this.state.canvas));
-  }	
-
-
-  triggerMouseEvent (node, eventType) {
-   	var clickEvent = document.createEvent ('MouseEvents');
-   	clickEvent.initEvent (eventType, true, true);
-   	node.dispatchEvent (clickEvent);
-  }
-
 
 	render() {
 		return (
 			<div className= "drawingWrapper" >
-				<div onClick={() => {this.draw();}}>
+				<div>
 					<canvas id="canvas" width="375" height="375" ></canvas>
 				</div>
 				<button onClick={() => {this.endSession()}}>End session</button>
