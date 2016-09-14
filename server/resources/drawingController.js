@@ -10,7 +10,7 @@ exports.addDrawing = function (drawing) {
     if (err) {
       console.log(err);
     }
-  }); 
+  });
 };
 
 exports.retrieveRoundsDrawings = function (round, cb) {
@@ -28,7 +28,7 @@ exports.updateVoteCount = function (rounds, name, cb) {
   console.log('operating on user', name);
   Drawing.update({roundId: rounds, playerName: name}, {$inc: {voteCount: 1} }, function (err, drawing) {
     if (err) {
-      console.log(err); 
+      console.log(err);
     } else {
       cb(drawing);
       console.log('RESULT AFTER UDPATE IS', drawing);
