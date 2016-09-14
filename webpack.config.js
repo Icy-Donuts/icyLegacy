@@ -18,7 +18,15 @@ var config = {
        loader : 'babel'
      }
    ]
- }
+ },
+ resolve: {
+    extensions: ['', '.js', '.jsx', '.css'],
+    root: path.join(APP_DIR, 'public'),
+    moduleDirectories: [
+      'node_modules',
+      'public'
+    ],
+  },
 };
 
 module.exports = config;
