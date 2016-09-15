@@ -27236,6 +27236,7 @@
 				socket.emit('getRooms');
 
 				socket.on('allRooms', function (rooms) {
+					console.log('all rooms: ', rooms);
 					this.setState({ rooms: rooms });
 				}.bind(this));
 
@@ -27243,8 +27244,8 @@
 					if (didJoin) {
 						window.roomName = roomName;
 						window.host = false;
-						window.location.href = '#/drawing';
 						window.canvas = canvas;
+						window.location.href = '#/drawing';
 					} else {
 						console.log('That room does not exist');
 					}
@@ -27252,8 +27253,8 @@
 			}
 		}, {
 			key: 'startSession',
-			value: function startSession(host) {
-				socket.emit('createRoom', host);
+			value: function startSession(title) {
+				socket.emit('createRoom', title);
 				// document.getElementById('roomTitle').value = '';
 			}
 		}, {
@@ -27348,8 +27349,10 @@
 			var _this = _possibleConstructorReturn(this, (Drawing.__proto__ || Object.getPrototypeOf(Drawing)).call(this, props));
 
 			_this.state = {
-				canvas: '',
-				room: '',
+				room: {
+					name: '',
+					canvas: ''
+				},
 				host: false
 			};
 			return _this;
@@ -27359,27 +27362,29 @@
 			key: 'componentWillMount',
 			value: function componentWillMount() {
 				this.setState({
-					room: window.roomName,
-					canvas: window.canvas,
+					room: {
+						name: window.roomName,
+						canvas: window.canvas
+					},
 					host: window.host
 				});
 			}
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
+				console.log('window.roomName: ', window.roomName);
 				if (!window.roomName) {
 					window.location.href = '/';
 				}
-
 				var self = this.state;
 				var canvas = new fabric.Canvas('canvas', {
 					isDrawingMode: true
 				});
-				canvas.loadFromJSON(self.canvas, canvas.renderAll.bind(canvas));
+				canvas.loadFromJSON(self.room.canvas, canvas.renderAll.bind(canvas));
 				canvas.freeDrawingBrush.width = 10;
 				canvas.on('path:created', function (e) {
-					this.setState({ canvas: e.path.toJSON() });
-					socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(canvas), self.room);
+					this.state.room.canvas = e.path.toJSON();
+					socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(canvas), self.room.name);
 				}.bind(this));
 				socket.on('updateCanvas', function (svg) {
 					console.log('drawsss');
@@ -27404,8 +27409,10 @@
 		}, {
 			key: 'endSession',
 			value: function endSession() {
-				var room = this.state.room;
+				console.log('this.state: ', this.state);
+				var room = this.state.room.name;
 				var host = this.state.host;
+				console.log('deleted room: ', room);
 				socket.emit('endSession', room, host);
 				window.location.href = '/';
 				socket.emit('disconnect');
