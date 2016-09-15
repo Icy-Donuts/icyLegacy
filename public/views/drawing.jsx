@@ -21,17 +21,24 @@ export default class Drawing extends React.Component {
 		canvas.loadFromJSON(self.canvas, canvas.renderAll.bind(canvas));
 		canvas.freeDrawingBrush.width = 10;
 		canvas.on('path:created', function(e) {
+      this.setState({canvas: e.path.toJSON()});
 			socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(canvas), self.room);
-		});
+		}.bind(this));
 		socket.on('updateCanvas', function(svg) {
 			console.log('drawsss');
 			fabric.util.enlivenObjects([svg], function(objects) {
+        console.log('objects',objects);
 				objects.forEach(function(o){
 					canvas.add(o);
 				})
 			})
 		})
 	}
+
+  undo() {
+    this.state.canvas.pop();
+    socket.emit('pathAdded',);
+  }
 
 	endSession() {
 		socket.emit('disconnect', this.state.room);
@@ -40,6 +47,7 @@ export default class Drawing extends React.Component {
 	render() {
 		return (
 			<div className= "drawingWrapper" >
+        <button onClick={() => {this.undo()}}>undo</button>
 				<div>
 					<canvas id="canvas" width="375" height="375" ></canvas>
 				</div>

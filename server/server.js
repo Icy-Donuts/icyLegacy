@@ -20,9 +20,8 @@ io.on('connection', function(socket) {
 
   socket.on('createRoom', function (data) {
     rooms[data.split(' ').join('')] = data;
-    console.log('rooms: ', rooms);
     socket.join(data.split(' ').join(''));
-    socket.emit('enterRoom', data.split(' ').join(''));
+    socket.emit('enterRoom', data.split(' ').join(''), canvas);
   });
 
   socket.on('pathAdded', function(path, svg, roomName) {
@@ -41,9 +40,16 @@ io.on('connection', function(socket) {
 
   })
 
+  socket.on('getRooms', function() {
+    var roomsArr = [];
+    for (room in rooms) {
+      roomsArr.push(rooms[room]);
+    }
+    socket.emit('allRooms', roomsArr);
+  })
+
   socket.on('disconnect', function (roomName) {
     console.log('A SOCKET DISCONNECTED!');
-    console.log('canvas: ', canvas);
     delete clients[roomName];
   });
 
