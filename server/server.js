@@ -27,6 +27,10 @@ io.on('connection', function(socket) {
 
   socket.on('pathAdded', function(path, svg, roomName) {
     rooms[roomName] = svg;
+<<<<<<< HEAD
+=======
+    console.log('pathAdded: ', roomName);
+>>>>>>> 733005c2f6d15b4e85af84be7cf10ba2ea2db2c1
     socket.broadcast.to(roomName).emit('updateCanvas', path);
   });
 
@@ -45,7 +49,10 @@ io.on('connection', function(socket) {
   socket.on('endSession', function (roomName, isHost) {
     console.log('A session has ended!');
     console.log('rooms beofre deleting: ', roomName);
+<<<<<<< HEAD
     console.log('current rooms: ', rooms);
+=======
+>>>>>>> 733005c2f6d15b4e85af84be7cf10ba2ea2db2c1
     console.log('isHost: ', isHost);
     if (isHost) {
       socket.broadcast.to(roomName).emit('hostEndSession');

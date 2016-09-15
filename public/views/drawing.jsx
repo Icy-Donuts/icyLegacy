@@ -22,6 +22,7 @@ export default class Drawing extends React.Component {
 	}
 
 	componentDidMount() {
+		console.log('window.roomName: ', window.roomName);
 		if (!window.roomName) {
 			window.location.href = '/';
 		}
@@ -29,11 +30,10 @@ export default class Drawing extends React.Component {
 		var canvas = new fabric.Canvas('canvas', {
 			isDrawingMode: true,
 		});
-    console.log('canvas: ', self.room.canvas);
 		canvas.loadFromJSON(self.room.canvas, canvas.renderAll.bind(canvas));
 		canvas.freeDrawingBrush.width = 10;
 		canvas.on('path:created', function(e) {
-      		this.setState({room: {canvas: e.path.toJSON()}});
+  		this.state.room.canvas = e.path.toJSON();
 			socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(canvas), self.room.name);
 		}.bind(this));
 		socket.on('updateCanvas', function(svg) {

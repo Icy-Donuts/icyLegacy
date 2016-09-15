@@ -48,7 +48,6 @@ export default class CreateRoom extends React.Component {
     socket.emit('joinRoom', roomName);
     // document.getElementById('roomTitle').value = '';
   }
-
   render() {
     return (
       <div className="readyScreen valign">
