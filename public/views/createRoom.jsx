@@ -11,13 +11,13 @@ export default class CreateRoom extends React.Component {
 	}
 	componentWillMount() {
 		var currentRoom;
-    var self = this;
+    	var self = this;
 		socket.on('enterRoom', function(roomName, canvas) {
 			window.roomName = roomName;
-      window.canvas = canvas;
+  		window.canvas = canvas;
 			window.host = true;
 			window.location.href = '#/drawing';
-      socket.removeListener('allRooms');
+      		socket.removeListener('allRooms');
 		});
 
     socket.emit('getRooms');

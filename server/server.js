@@ -14,7 +14,6 @@ var rooms = {};
 var rounds = 0;
 var queried = false;
 var images;
-var canvas = '';
 
 io.on('connection', function(socket) {
 
@@ -27,7 +26,8 @@ io.on('connection', function(socket) {
   });
 
   socket.on('pathAdded', function(path, svg, roomName) {
-    canvas = svg;
+    rooms[roomName] = svg;
+    console.log('pathAdded: ', roomName);
     socket.broadcast.to(roomName).emit('updateCanvas', path);
   });
 
@@ -45,10 +45,9 @@ io.on('connection', function(socket) {
 
   socket.on('endSession', function (roomName, isHost) {
     console.log('A session has ended!');
-    console.log('rooms beofre deleting: ', rooms);
+    console.log('rooms beofre deleting: ', roomName);
     console.log('isHost: ', isHost);
     if (isHost) {
-      rooms[roomName] = '';
       socket.broadcast.to(roomName).emit('hostEndSession');
       socket.in(roomName).leave(roomName);
       delete rooms[roomName];

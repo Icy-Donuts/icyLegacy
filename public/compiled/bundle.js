@@ -27372,18 +27372,18 @@
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
+				console.log('window.roomName: ', window.roomName);
 				if (!window.roomName) {
 					window.location.href = '/';
 				}
-
 				var self = this.state;
 				var canvas = new fabric.Canvas('canvas', {
 					isDrawingMode: true
 				});
-				canvas.loadFromJSON(self.canvas, canvas.renderAll.bind(canvas));
+				canvas.loadFromJSON(self.room.canvas, canvas.renderAll.bind(canvas));
 				canvas.freeDrawingBrush.width = 10;
 				canvas.on('path:created', function (e) {
-					this.setState({ room: { canvas: e.path.toJSON() } });
+					this.state.room.canvas = e.path.toJSON();
 					socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(canvas), self.room.name);
 				}.bind(this));
 				socket.on('updateCanvas', function (svg) {
@@ -27409,8 +27409,10 @@
 		}, {
 			key: 'endSession',
 			value: function endSession() {
+				console.log('this.state: ', this.state);
 				var room = this.state.room.name;
 				var host = this.state.host;
+				console.log('deleted room: ', room);
 				socket.emit('endSession', room, host);
 				window.location.href = '/';
 				socket.emit('disconnect');
