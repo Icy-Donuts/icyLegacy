@@ -26,8 +26,13 @@ var images;
 
 //handles file uploads
 app.post('/file_upload', function (req, res) {
+
   upload(req, res, function (err) {
-    console.log(req.file)
+    var dirnamemod = __dirname.replace('/server',"")
+    var path = dirnamemod + "/uploads/" + req.file.path.replace('uploads/',"");
+    fs.rename(path,path.slice(0,path.indexOf('/uploads/') + 9) + req.body.roomtitle,function(err){
+      if(err){console.log(err);}
+    })
     if (err) {
       // An error occurred when uploading
       return

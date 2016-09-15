@@ -61,14 +61,12 @@ export default class CreateRoom extends React.Component {
       }.bind(this))}
       </ul>	
 			<h3 className="tlt"> Create Room Session </h3>
-			<input type="text" id="hostTitle" placeholder="Title here..." />
 			<form action = "file_upload" encType="multipart/form-data" method = "Post">
-				<div id="fileSize"></div>
-				<div id="fileType"></div>
-				<div id="progress"></div>
+				 <input type="text" id="hostTitle" name="roomtitle" placeholder="Title here..." />
 				 <input type="file" name="video" ></input>
 					<button type= "submit">Submit</button>
 			</form>
+			<script>console.log('HEY');$('#fname').val('Hey')</script>
 			<button 
 				className="btn waves-effect waves-light"
 				onClick={() => {var title = document.getElementById('hostTitle').value; 

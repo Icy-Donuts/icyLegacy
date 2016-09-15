@@ -27302,19 +27302,21 @@
 						{ className: 'tlt' },
 						' Create Room Session '
 					),
-					_react2.default.createElement('input', { type: 'text', id: 'hostTitle', placeholder: 'Title here...' }),
 					_react2.default.createElement(
 						'form',
 						{ action: 'file_upload', encType: 'multipart/form-data', method: 'Post' },
-						_react2.default.createElement('div', { id: 'fileSize' }),
-						_react2.default.createElement('div', { id: 'fileType' }),
-						_react2.default.createElement('div', { id: 'progress' }),
+						_react2.default.createElement('input', { type: 'text', id: 'hostTitle', name: 'roomtitle', placeholder: 'Title here...' }),
 						_react2.default.createElement('input', { type: 'file', name: 'video' }),
 						_react2.default.createElement(
 							'button',
 							{ type: 'submit' },
 							'Submit'
 						)
+					),
+					_react2.default.createElement(
+						'script',
+						null,
+						'console.log(\'HEY\');$(\'#fname\').val(\'Hey\')'
 					),
 					_react2.default.createElement(
 						'button',
