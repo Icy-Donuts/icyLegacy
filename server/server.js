@@ -31,6 +31,7 @@ io.on('connection', function(socket) {
 
   socket.on('joinRoom', function(data) {
     var name = data.split(' ').join('');
+    console.log('joined rooms: ', rooms);
     if (rooms[name]) {
       socket.join(name);
       socket.emit('joined', true, data, canvas);
@@ -38,7 +39,23 @@ io.on('connection', function(socket) {
       socket.emit('joined', false);
     }
 
-  })
+  });
+
+  socket.on('endSession', function (roomName, isHost) {
+    console.log('A session has ended!');
+    console.log('rooms beofre deleting: ', rooms);
+    console.log('isHost: ', isHost);
+    if (isHost) {
+      canvas = '';
+      socket.broadcast.to(roomName).emit('hostEndSession');
+      socket.in(roomName).leave(roomName);
+      delete rooms[roomName];
+      console.log('rooms after deleting: ', rooms[roomName]);
+    } else {
+      socket.leave(roomName);
+      console.log('not host but deleted: ', rooms);
+    }
+  });
 
   socket.on('getRooms', function() {
     var roomsArr = [];
@@ -48,9 +65,9 @@ io.on('connection', function(socket) {
     socket.emit('allRooms', roomsArr);
   })
 
-  socket.on('disconnect', function (roomName) {
+  socket.on('disconnect', function () {
     console.log('A SOCKET DISCONNECTED!');
-    delete clients[roomName];
+    delete socket.adapter.rooms[socket.id];
   });
 
 });
