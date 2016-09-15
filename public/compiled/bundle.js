@@ -27300,7 +27300,7 @@
 					_react2.default.createElement(
 						'h3',
 						{ className: 'tlt' },
-						' Create Rooom Session '
+						' Create Room Session '
 					),
 					_react2.default.createElement('input', { type: 'text', id: 'hostTitle', placeholder: 'Title here...' }),
 					_react2.default.createElement(
@@ -27309,7 +27309,7 @@
 						_react2.default.createElement(
 							'span',
 							null,
-							' Load video file from File'
+							' Load video file from file'
 						),
 						_react2.default.createElement('input', { type: 'file', id: 'vidFileFromFile' }),
 						_react2.default.createElement(

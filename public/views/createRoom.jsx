@@ -60,10 +60,10 @@ export default class CreateRoom extends React.Component {
         )
       }.bind(this))}
       </ul>	
-			<h3 className="tlt"> Create Rooom Session </h3>
+			<h3 className="tlt"> Create Room Session </h3>
 			<input type="text" id="hostTitle" placeholder="Title here..." />
 			<form>
-				<span> Load video file from File</span>
+				<span> Load video file from file</span>
 				<input type = "file" id="vidFileFromFile"/>
 				<button type="submit">Submit</button>
 			</form>
