@@ -84,6 +84,14 @@ io.on('connection', function(socket) {
     console.log('A session has ended!');
     console.log('rooms beofre deleting: ', roomName);
     console.log('isHost: ', isHost);
+
+    var dirnamemod = __dirname.replace('/server',"")
+    var vidpath = dirnamemod + "/public/assets/uploads/" + roomName;
+
+    fs.unlink(vidpath,function(err){
+      console.log('VIDEO DELETION ERROR',err);
+    })
+
     if (isHost) {
       socket.broadcast.to(roomName).emit('hostEndSession');
       socket.in(roomName).leave(roomName);
