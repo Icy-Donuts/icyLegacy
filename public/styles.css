@@ -302,6 +302,11 @@ video{
     display:none;
 }
 
+#submitted{
+    display:block;
+    text-align: center;
+}
+
 
 /*
 .votingCountdown.valign {
