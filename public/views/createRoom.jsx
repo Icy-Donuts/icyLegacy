@@ -62,6 +62,9 @@ export default class CreateRoom extends React.Component {
       </ul>	
 			<h3 className="tlt"> Create Rooom Session </h3>
 			<input type="text" id="hostTitle" placeholder="Title here..." />
+			<input type = "text" id="vidFileFromLink" placeholder = "Video link here"/>
+			<span> Or load file from computer </span>
+			<input type = "file" id="vidFileFromFile"/>
 			<button 
 				className="btn waves-effect waves-light"
 				onClick={() => {var title = document.getElementById('hostTitle').value; this.startSession(title)}}>

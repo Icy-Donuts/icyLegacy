@@ -27298,6 +27298,13 @@
 						' Create Rooom Session '
 					),
 					_react2.default.createElement('input', { type: 'text', id: 'hostTitle', placeholder: 'Title here...' }),
+					_react2.default.createElement('input', { type: 'text', id: 'vidFileFromLink', placeholder: 'Video link here' }),
+					_react2.default.createElement(
+						'span',
+						null,
+						' Or load file from computer '
+					),
+					_react2.default.createElement('input', { type: 'file', id: 'vidFileFromFile' }),
 					_react2.default.createElement(
 						'button',
 						{
@@ -27435,7 +27442,8 @@
 					_react2.default.createElement(
 						'div',
 						null,
-						_react2.default.createElement('canvas', { id: 'canvas', width: '375', height: '375' })
+						_react2.default.createElement('video', { controls: true, src: '/assets/videos/test2.mov', width: '750', height: '750' }),
+						_react2.default.createElement('canvas', { id: 'canvas', width: '750', height: '700' })
 					),
 					_react2.default.createElement(
 						'button',
