@@ -27252,6 +27252,19 @@
 				});
 			}
 		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				var that = this;
+				console.log('I mounted');
+				console.log();
+				$('#submitted').on('click', function () {
+					console.log('Submitted');
+					setInterval(function () {
+						$('#createPageButton').click();
+					}, 2000);
+				});
+			}
+		}, {
 			key: 'startSession',
 // <<<<<<< 6d60a4b5d0e61f0a8093a7b8406d66e122e7b7ae
 			value: function startSession(title) {
@@ -27304,13 +27317,13 @@
 					),
 					_react2.default.createElement(
 						'form',
-						{ action: 'file_upload', encType: 'multipart/form-data', method: 'Post' },
+						{ id: 'filesender', action: 'file_upload', encType: 'multipart/form-data', method: 'Post' },
 						_react2.default.createElement('input', { type: 'text', id: 'hostTitle', name: 'roomtitle', placeholder: 'Title here...' }),
 						_react2.default.createElement('input', { type: 'file', name: 'video' }),
 						_react2.default.createElement(
 							'button',
-							{ type: 'submit' },
-							'Submit'
+							{ type: 'submit', id: 'submitted', className: 'btn waves-effect waves-light' },
+							'Create a room with this video'
 						)
 					),
 					_react2.default.createElement(
@@ -27320,7 +27333,8 @@
 					),
 					_react2.default.createElement(
 						'button',
-						{
+						{ hidden: true,
+							id: 'createPageButton',
 							className: 'btn waves-effect waves-light',
 							onClick: function onClick() {
 								var title = document.getElementById('hostTitle').value;

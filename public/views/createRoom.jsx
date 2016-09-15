@@ -39,6 +39,18 @@ export default class CreateRoom extends React.Component {
 		})
 	}
 
+	componentDidMount(){
+		var that = this;
+		console.log('I mounted');
+		console.log()
+		$('#submitted').on('click',function(){
+			console.log('Submitted');
+			setInterval(function(){
+				$('#createPageButton').click()
+			},2000);
+		})
+
+	}
 	
 	startSession(title) {
 		socket.emit('createRoom', {host:title});
@@ -61,13 +73,14 @@ export default class CreateRoom extends React.Component {
       }.bind(this))}
       </ul>	
 			<h3 className="tlt"> Create Room Session </h3>
-			<form action = "file_upload" encType="multipart/form-data" method = "Post">
+			<form id="filesender" action = "file_upload" encType="multipart/form-data" method = "Post">
 				 <input type="text" id="hostTitle" name="roomtitle" placeholder="Title here..." />
 				 <input type="file" name="video" ></input>
-					<button type= "submit">Submit</button>
+					<button type= "submit" id="submitted" className="btn waves-effect waves-light">Create a room with this video</button>
 			</form>
 			<script>console.log('HEY');$('#fname').val('Hey')</script>
-			<button 
+			<button hidden
+				id="createPageButton"
 				className="btn waves-effect waves-light"
 				onClick={() => {var title = document.getElementById('hostTitle').value; 
 
