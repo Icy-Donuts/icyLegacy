@@ -20,9 +20,8 @@ io.on('connection', function(socket) {
 
   socket.on('createRoom', function (data) {
     rooms[data.split(' ').join('')] = data;
-    console.log('rooms: ', rooms);
     socket.join(data.split(' ').join(''));
-    socket.emit('enterRoom', data.split(' ').join(''));
+    socket.emit('enterRoom', data.split(' ').join(''), canvas);
   });
 
   socket.on('pathAdded', function(path, svg, roomName) {
@@ -34,6 +33,7 @@ io.on('connection', function(socket) {
     var name = data.split(' ').join('');
     if (rooms[name]) {
       socket.join(name);
+      console.log(canvas);
       socket.emit('joined', true, data, canvas);
     } else {
       socket.emit('joined', false);
@@ -41,9 +41,16 @@ io.on('connection', function(socket) {
 
   })
 
+  socket.on('getRooms', function() {
+    var roomsArr = [];
+    for (room in rooms) {
+      roomsArr.push(rooms[room]);
+    }
+    socket.emit('allRooms', roomsArr);
+  })
+
   socket.on('disconnect', function (roomName) {
     console.log('A SOCKET DISCONNECTED!');
-    console.log('canvas: ', canvas);
     delete clients[roomName];
   });
 
