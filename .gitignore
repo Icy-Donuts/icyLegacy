@@ -1,4 +1,6 @@
+.DS_Store
 node_modules
+public/compiled/
 public/node_modules/
 .npm
 .node_repl_history

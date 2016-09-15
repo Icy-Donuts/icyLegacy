@@ -36,9 +36,8 @@ export default class Drawing extends React.Component {
 	}
 
   undo() {
-    var x = this.state.canvas;
-    x.pop();
-    socket.emit('pathAdded', x);
+    this.state.canvas.pop();
+    socket.emit('pathAdded',);
   }
 
 	endSession() {

@@ -33,7 +33,6 @@ io.on('connection', function(socket) {
     var name = data.split(' ').join('');
     if (rooms[name]) {
       socket.join(name);
-      console.log(canvas);
       socket.emit('joined', true, data, canvas);
     } else {
       socket.emit('joined', false);
