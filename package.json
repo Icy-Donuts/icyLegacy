@@ -11,6 +11,7 @@
     "babel-preset-react": "^6.11.1",
     "express": "^4.14.0",
     "mongoose": "^4.6.0",
+    "multer": "^1.2.0",
     "nodemon": "^1.10.2",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",

@@ -1,5 +1,9 @@
 var express = require('express');
 var app = express();
+var multer  = require('multer')
+var upload = multer({ dest: 'uploads/' })
+
+app.get('/')
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var db = require('./db');
