@@ -27279,7 +27279,7 @@
 					_react2.default.createElement(
 						'h3',
 						{ className: 'tlt' },
-						' Join Rooom Session '
+						' Join Room Session '
 					),
 					_react2.default.createElement(
 						'ul',
@@ -27303,19 +27303,29 @@
 						' Create Rooom Session '
 					),
 					_react2.default.createElement('input', { type: 'text', id: 'hostTitle', placeholder: 'Title here...' }),
-					_react2.default.createElement('input', { type: 'text', id: 'vidFileFromLink', placeholder: 'Video link here' }),
 					_react2.default.createElement(
-						'span',
+						'form',
 						null,
-						' Or load file from computer '
+						_react2.default.createElement(
+							'span',
+							null,
+							' Load video file from File'
+						),
+						_react2.default.createElement('input', { type: 'file', id: 'vidFileFromFile' }),
+						_react2.default.createElement(
+							'button',
+							{ type: 'submit' },
+							'Submit'
+						)
 					),
-					_react2.default.createElement('input', { type: 'file', id: 'vidFileFromFile' }),
 					_react2.default.createElement(
 						'button',
 						{
 							className: 'btn waves-effect waves-light',
 							onClick: function onClick() {
-								var title = document.getElementById('hostTitle').value;_this3.startSession(title);
+								var title = document.getElementById('hostTitle').value;
+
+								_this3.startSession(title);
 							} },
 						'Create a room'
 					)

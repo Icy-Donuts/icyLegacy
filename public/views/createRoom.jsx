@@ -53,7 +53,7 @@ export default class CreateRoom extends React.Component {
 	render() {
 		return (
 		<div className="readyScreen valign">
-			<h3 className="tlt"> Join Rooom Session </h3>
+			<h3 className="tlt"> Join Room Session </h3>
       <ul> {this.state.rooms.map(function(room, index) {
         return(
           <li key={index} onClick={() => {this.joinRoom(room)}}>{room}</li>
@@ -62,12 +62,16 @@ export default class CreateRoom extends React.Component {
       </ul>	
 			<h3 className="tlt"> Create Rooom Session </h3>
 			<input type="text" id="hostTitle" placeholder="Title here..." />
-			<input type = "text" id="vidFileFromLink" placeholder = "Video link here"/>
-			<span> Or load file from computer </span>
-			<input type = "file" id="vidFileFromFile"/>
+			<form>
+				<span> Load video file from File</span>
+				<input type = "file" id="vidFileFromFile"/>
+				<button type="submit">Submit</button>
+			</form>
 			<button 
 				className="btn waves-effect waves-light"
-				onClick={() => {var title = document.getElementById('hostTitle').value; this.startSession(title)}}>
+				onClick={() => {var title = document.getElementById('hostTitle').value; 
+
+				this.startSession(title)}}>
 				Create a room
 			</button>
 		</div>
