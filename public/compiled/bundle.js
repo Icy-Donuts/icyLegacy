@@ -27253,8 +27253,13 @@
 			}
 		}, {
 			key: 'startSession',
+// <<<<<<< 6d60a4b5d0e61f0a8093a7b8406d66e122e7b7ae
 			value: function startSession(title) {
-				socket.emit('createRoom', title);
+				socket.emit('createRoom', {host:title});
+// // =======
+// 			value: function startSession(host) {
+// 				socket.emit('createRoom', { host: host });
+// >>>>>>> Send host boolean in object rather than as variable to server
 				// document.getElementById('roomTitle').value = '';
 			}
 		}, {

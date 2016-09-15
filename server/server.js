@@ -17,12 +17,21 @@ var images;
 
 io.on('connection', function(socket) {
 
+// <<<<<<< 6d60a4b5d0e61f0a8093a7b8406d66e122e7b7ae
   socket.on('createRoom', function (name) {
+    name = name['host'];
     var formatedRoomName = name.split(' ').join('');
     rooms[formatedRoomName] = '';
     console.log('created rooms: ', rooms);
     socket.join(formatedRoomName);
     socket.emit('enterRoom', formatedRoomName, rooms[formatedRoomName]);
+// =======
+  // socket.on('createRoom', function (data) {
+  //   data = data['host']
+  //   rooms[data.split(' ').join('')] = data;
+  //   socket.join(data.split(' ').join(''));
+  //   socket.emit('enterRoom', data.split(' ').join(''), canvas);
+// >>>>>>> Send host boolean in object rather than as variable to server
   });
 
   socket.on('pathAdded', function(path, svg, roomName) {
