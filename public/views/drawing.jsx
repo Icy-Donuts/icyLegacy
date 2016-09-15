@@ -4,15 +4,19 @@ export default class Drawing extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			canvas: '',
-		 	room: '',
+		 	room: {
+		 		name: '',
+		 		canvas: ''
+		 	},
 		 	host: false
 		}
 	}
 	componentWillMount() {
 	 	this.setState({
-	 		room: window.roomName, 
-	 		canvas: window.canvas,
+	 		room: {
+	 			name: window.roomName, 
+	 			canvas: window.canvas
+	 		},
 	 		host: window.host
 	 	});
 	}
@@ -29,8 +33,8 @@ export default class Drawing extends React.Component {
 		canvas.loadFromJSON(self.canvas, canvas.renderAll.bind(canvas));
 		canvas.freeDrawingBrush.width = 10;
 		canvas.on('path:created', function(e) {
-      this.setState({canvas: e.path.toJSON()});
-			socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(canvas), self.room);
+      this.setState({room: {canvas: e.path.toJSON()}});
+			socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(canvas), self.room.name);
 		}.bind(this));
 		socket.on('updateCanvas', function(svg) {
 			console.log('drawsss');
@@ -53,7 +57,7 @@ export default class Drawing extends React.Component {
   }
 
 	endSession() {
-		var room = this.state.room;
+		var room = this.state.room.name;
 		var host = this.state.host;
 		socket.emit('endSession', room, host);
 		window.location.href = '/';

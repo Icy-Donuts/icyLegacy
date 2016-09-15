@@ -23,6 +23,7 @@ export default class CreateRoom extends React.Component {
     socket.emit('getRooms');
 
     socket.on('allRooms', function(rooms) {
+    	console.log('all rooms: ', rooms);
       this.setState({rooms: rooms});
     }.bind(this));
 
@@ -30,8 +31,8 @@ export default class CreateRoom extends React.Component {
 			if (didJoin) {
 				window.roomName = roomName;
 				window.host = false;
-				window.location.href = '#/drawing';
 				window.canvas = canvas;
+				window.location.href = '#/drawing';
 			} else {
 				console.log('That room does not exist');
 			}
@@ -39,8 +40,8 @@ export default class CreateRoom extends React.Component {
 	}
 
 	
-	startSession(host) {
-		socket.emit('createRoom', host);
+	startSession(title) {
+		socket.emit('createRoom', title);
 		// document.getElementById('roomTitle').value = '';
 	}
 
