@@ -1,7 +1,12 @@
 var express = require('express');
 var app = express();
+var bp = require('body-parser');
 var multer  = require('multer')
-var upload = multer({ dest: 'uploads/' })
+var upload = multer({ dest: 'uploads/' }).single('video')
+var fs = require('fs');
+
+app.use(bp.urlencoded({extended:true}));
+app.use(bp.json());
 
 app.get('/')
 var http = require('http').Server(app);
@@ -18,6 +23,19 @@ var rooms = {};
 var rounds = 0;
 var queried = false;
 var images;
+
+//handles file uploads
+app.post('/file_upload', function (req, res) {
+  upload(req, res, function (err) {
+    console.log(req.file)
+    if (err) {
+      // An error occurred when uploading
+      return
+    }
+
+    // Everything went fine
+  })
+})
 
 io.on('connection', function(socket) {
 

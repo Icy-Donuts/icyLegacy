@@ -27305,13 +27305,11 @@
 					_react2.default.createElement('input', { type: 'text', id: 'hostTitle', placeholder: 'Title here...' }),
 					_react2.default.createElement(
 						'form',
-						null,
-						_react2.default.createElement(
-							'span',
-							null,
-							' Load video file from file'
-						),
-						_react2.default.createElement('input', { type: 'file', id: 'vidFileFromFile' }),
+						{ action: 'file_upload', encType: 'multipart/form-data', method: 'Post' },
+						_react2.default.createElement('div', { id: 'fileSize' }),
+						_react2.default.createElement('div', { id: 'fileType' }),
+						_react2.default.createElement('div', { id: 'progress' }),
+						_react2.default.createElement('input', { type: 'file', name: 'video' }),
 						_react2.default.createElement(
 							'button',
 							{ type: 'submit' },

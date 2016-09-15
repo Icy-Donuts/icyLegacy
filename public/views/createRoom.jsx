@@ -62,10 +62,12 @@ export default class CreateRoom extends React.Component {
       </ul>	
 			<h3 className="tlt"> Create Room Session </h3>
 			<input type="text" id="hostTitle" placeholder="Title here..." />
-			<form>
-				<span> Load video file from file</span>
-				<input type = "file" id="vidFileFromFile"/>
-				<button type="submit">Submit</button>
+			<form action = "file_upload" encType="multipart/form-data" method = "Post">
+				<div id="fileSize"></div>
+				<div id="fileType"></div>
+				<div id="progress"></div>
+				 <input type="file" name="video" ></input>
+					<button type= "submit">Submit</button>
 			</form>
 			<button 
 				className="btn waves-effect waves-light"
