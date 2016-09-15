@@ -12,7 +12,7 @@ export default class CreateRoom extends React.Component {
 	componentWillMount() {
 		var currentRoom;
     var self = this;
-		socket.on('enterRoom', function(roomName) {
+		socket.on('enterRoom', function(roomName, canvas) {
 			window.roomName = roomName;
       window.canvas = canvas;
 			window.host = true;
@@ -22,8 +22,8 @@ export default class CreateRoom extends React.Component {
 
     socket.emit('getRooms');
 
-    socket.on('allRooms', function() {
-      this.setState({rooms: rooms};);
+    socket.on('allRooms', function(rooms) {
+      this.setState({rooms: rooms});
     }.bind(this));
 
 		socket.on('joined', function(didJoin, roomName, canvas) {
@@ -41,12 +41,12 @@ export default class CreateRoom extends React.Component {
 	
 	startSession(host) {
 		socket.emit('createRoom', host);
-		document.getElementById('roomTitle').value = '';
+		// document.getElementById('roomTitle').value = '';
 	}
 
 	joinRoom(roomName) {
 		socket.emit('joinRoom', roomName);
-		document.getElementById('roomTitle').value = '';
+		// document.getElementById('roomTitle').value = '';
 	}
 
 	render() {
