@@ -5,15 +5,23 @@ export default class Drawing extends React.Component {
 		super(props)
 		this.state = {
 			canvas: '',
-		 	room: ''
+		 	room: '',
+		 	host: false
 		}
 	}
 	componentWillMount() {
-	 	this.setState({room: window.roomName, canvas: window.canvas});
-		// socket.emit('pathAdded', this.state.room);
+	 	this.setState({
+	 		room: window.roomName, 
+	 		canvas: window.canvas,
+	 		host: window.host
+	 	});
 	}
 
 	componentDidMount() {
+		if (!window.roomName) {
+			window.location.href = '/';
+		}
+	 	
 		var self = this.state;
 		var canvas = new fabric.Canvas('canvas', {
 			isDrawingMode: true,
@@ -32,6 +40,10 @@ export default class Drawing extends React.Component {
 					canvas.add(o);
 				})
 			})
+		});
+		socket.on('hostEndSession', function() {
+			alert('Host has left this room');
+			window.location.href = '/';
 		})
 	}
 
@@ -41,7 +53,11 @@ export default class Drawing extends React.Component {
   }
 
 	endSession() {
-		socket.emit('disconnect', this.state.room);
+		var room = this.state.room;
+		var host = this.state.host;
+		socket.emit('endSession', room, host);
+		window.location.href = '/';
+		socket.emit('disconnect');
 	}
 
 	render() {
@@ -51,7 +67,7 @@ export default class Drawing extends React.Component {
 				<div>
 					<canvas id="canvas" width="375" height="375" ></canvas>
 				</div>
-				<button onClick={() => {this.endSession()}}>End session</button>
+				<button onClick={() => {this.endSession();}}>End session</button>
 			</div>
 
 			)
