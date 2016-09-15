@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var bp = require('body-parser');
 var multer  = require('multer')
-var upload = multer({ dest: 'uploads/' }).single('video')
+var upload = multer({ dest: 'public/assets/uploads' }).single('video')
 var fs = require('fs');
 
 app.use(bp.urlencoded({extended:true}));
@@ -29,8 +29,9 @@ app.post('/file_upload', function (req, res) {
 
   upload(req, res, function (err) {
     var dirnamemod = __dirname.replace('/server',"")
-    var path = dirnamemod + "/uploads/" + req.file.path.replace('uploads/',"");
-    fs.rename(path,path.slice(0,path.indexOf('/uploads/') + 9) + req.body.roomtitle,function(err){
+    var path = dirnamemod + "/public/assets/uploads/" + req.file.path.replace('public/assets/uploads/',"");
+    console.log('PATH',path);
+    fs.rename(path,path.slice(0,path.indexOf('public/assets/uploads/')+22) + req.body.roomtitle,function(err){
       if(err){console.log(err);}
     })
     if (err) {
