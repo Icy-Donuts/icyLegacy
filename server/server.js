@@ -31,7 +31,7 @@ app.post('/file_upload', function (req, res) {
     var dirnamemod = __dirname.replace('/server',"")
     var path = dirnamemod + "/public/assets/uploads/" + req.file.path.replace('public/assets/uploads/',"");
     console.log('PATH',path);
-    fs.rename(path,path.slice(0,path.indexOf('public/assets/uploads/')+22) + req.body.roomtitle,function(err){
+    fs.rename(path,path.slice(0,path.indexOf('public/assets/uploads/')+22) + req.body.roomtitle.replace(" ",""),function(err){
       if(err){console.log(err);}
     })
     if (err) {

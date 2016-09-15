@@ -27457,7 +27457,7 @@
 					_react2.default.createElement(
 						'div',
 						null,
-						_react2.default.createElement('video', { controls: true, src: '/assets/uploads/Bobbysroom', width: '750', height: '750' }),
+						_react2.default.createElement('video', { controls: true, src: "/assets/uploads/" + window.roomName, width: '750', height: '750' }),
 						_react2.default.createElement('canvas', { id: 'canvas', width: '750', height: '700' })
 					),
 					_react2.default.createElement(
