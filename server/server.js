@@ -14,27 +14,28 @@ var rooms = {};
 var rounds = 0;
 var queried = false;
 var images;
-var canvas = '';
 
 io.on('connection', function(socket) {
 
-  socket.on('createRoom', function (data) {
-    rooms[data.split(' ').join('')] = data;
-    socket.join(data.split(' ').join(''));
-    socket.emit('enterRoom', data.split(' ').join(''), canvas);
+  socket.on('createRoom', function (name) {
+    var formatedRoomName = name.split(' ').join('');
+    rooms[formatedRoomName] = '';
+    console.log('created rooms: ', rooms);
+    socket.join(formatedRoomName);
+    socket.emit('enterRoom', formatedRoomName, rooms[formatedRoomName]);
   });
 
   socket.on('pathAdded', function(path, svg, roomName) {
-    canvas = svg;
+    rooms[roomName] = svg;
     socket.broadcast.to(roomName).emit('updateCanvas', path);
   });
 
-  socket.on('joinRoom', function(data) {
-    var name = data.split(' ').join('');
+  socket.on('joinRoom', function(roomName) {
+    var name = roomName.split(' ').join('');
     console.log('joined rooms: ', rooms);
-    if (rooms[name]) {
+    if (rooms[name] !== undefined) {
       socket.join(name);
-      socket.emit('joined', true, data, canvas);
+      socket.emit('joined', true, name, rooms[name]);
     } else {
       socket.emit('joined', false);
     }
@@ -43,14 +44,15 @@ io.on('connection', function(socket) {
 
   socket.on('endSession', function (roomName, isHost) {
     console.log('A session has ended!');
-    console.log('rooms beofre deleting: ', rooms);
+    console.log('rooms beofre deleting: ', roomName);
+    console.log('current rooms: ', rooms);
     console.log('isHost: ', isHost);
     if (isHost) {
-      canvas = '';
       socket.broadcast.to(roomName).emit('hostEndSession');
       socket.in(roomName).leave(roomName);
+      console.log('RoomName= ', roomName, ' rooms[roomName]= ' + rooms[roomName]);
       delete rooms[roomName];
-      console.log('rooms after deleting: ', rooms[roomName]);
+      console.log('rooms after deleting: ', rooms);
     } else {
       socket.leave(roomName);
       console.log('not host but deleted: ', rooms);
@@ -60,7 +62,7 @@ io.on('connection', function(socket) {
   socket.on('getRooms', function() {
     var roomsArr = [];
     for (room in rooms) {
-      roomsArr.push(rooms[room]);
+      roomsArr.push(room);
     }
     socket.emit('allRooms', roomsArr);
   })

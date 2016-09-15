@@ -58,7 +58,7 @@
 
 	var _name2 = _interopRequireDefault(_name);
 
-	var _createRoom = __webpack_require__(240);
+	var _createRoom = __webpack_require__(236);
 
 	var _createRoom2 = _interopRequireDefault(_createRoom);
 
@@ -27182,7 +27182,141 @@
 	exports.default = Name;
 
 /***/ },
-/* 236 */,
+/* 236 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	//Simple ready view
+	var CreateRoom = function (_React$Component) {
+	  _inherits(CreateRoom, _React$Component);
+
+	  function CreateRoom(props) {
+	    _classCallCheck(this, CreateRoom);
+
+	    var _this = _possibleConstructorReturn(this, (CreateRoom.__proto__ || Object.getPrototypeOf(CreateRoom)).call(this, props));
+
+	    _this.state = {
+	      rooms: []
+	    };
+	    return _this;
+	  }
+
+	  _createClass(CreateRoom, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      var currentRoom;
+	      var self = this;
+	      socket.on('enterRoom', function (roomName, canvas) {
+	        window.roomName = roomName;
+	        window.canvas = canvas;
+	        window.host = true;
+	        window.location.href = '#/drawing';
+	        socket.removeListener('allRooms');
+	      });
+
+	      socket.emit('getRooms');
+
+	      socket.on('allRooms', function (rooms) {
+	        console.log('all rooms: ', rooms);
+	        this.setState({ rooms: rooms });
+	      }.bind(this));
+
+	      socket.on('joined', function (didJoin, roomName, canvas) {
+	        if (didJoin) {
+	          window.roomName = roomName;
+	          window.host = false;
+	          window.canvas = canvas;
+	          window.location.href = '#/drawing';
+	        } else {
+	          console.log('That room does not exist');
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'startSession',
+	    value: function startSession(title) {
+	      socket.emit('createRoom', title);
+	      // document.getElementById('roomTitle').value = '';
+	    }
+	  }, {
+	    key: 'joinRoom',
+	    value: function joinRoom(roomName) {
+	      socket.emit('joinRoom', roomName);
+	      // document.getElementById('roomTitle').value = '';
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'readyScreen valign' },
+	        _react2.default.createElement(
+	          'h3',
+	          { className: 'tlt' },
+	          ' Join Rooom Session '
+	        ),
+	        _react2.default.createElement(
+	          'ul',
+	          null,
+	          ' ',
+	          this.state.rooms.map(function (room, index) {
+	            var _this2 = this;
+
+	            return _react2.default.createElement(
+	              'li',
+	              { key: index, onClick: function onClick() {
+	                  _this2.joinRoom(room);
+	                } },
+	              room
+	            );
+	          }.bind(this))
+	        ),
+	        _react2.default.createElement(
+	          'h3',
+	          { className: 'tlt' },
+	          ' Create Rooom Session '
+	        ),
+	        _react2.default.createElement('input', { type: 'text', id: 'hostTitle', placeholder: 'Title here...' }),
+	        _react2.default.createElement(
+	          'button',
+	          {
+	            className: 'btn waves-effect waves-light',
+	            onClick: function onClick() {
+	              var title = document.getElementById('hostTitle').value;_this3.startSession(title);
+	            } },
+	          'Create a room'
+	        )
+	      );
+	    }
+	  }]);
+
+	  return CreateRoom;
+	}(_react2.default.Component);
+
+	exports.default = CreateRoom;
+
+/***/ },
 /* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -27206,13 +27340,6 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	//Used to render a board that we can draw on
-	// var Board = () => (
-	// 	<div>
-	// 		<canvas id="canvas" width="375" height="375"></canvas>
-	// 		</div>
-	// 	)
-
 	var Drawing = function (_React$Component) {
 		_inherits(Drawing, _React$Component);
 
@@ -27222,57 +27349,71 @@
 			var _this = _possibleConstructorReturn(this, (Drawing.__proto__ || Object.getPrototypeOf(Drawing)).call(this, props));
 
 			_this.state = {
-				canvas: ''
+				room: {
+					name: '',
+					canvas: ''
+				},
+				host: false
 			};
 			return _this;
 		}
 
 		_createClass(Drawing, [{
+			key: 'componentWillMount',
+			value: function componentWillMount() {
+				this.setState({
+					room: {
+						name: window.roomName,
+						canvas: window.canvas
+					},
+					host: window.host
+				});
+			}
+		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
-				console.log('did component mount??');
+				if (!window.roomName) {
+					window.location.href = '/';
+				}
+				var self = this.state;
 				var canvas = new fabric.Canvas('canvas', {
 					isDrawingMode: true
 				});
+				console.log('canvas: ', self.room.canvas);
+				canvas.loadFromJSON(self.room.canvas, canvas.renderAll.bind(canvas));
 				canvas.freeDrawingBrush.width = 10;
-				this.setState({ canvas: canvas });
+				canvas.on('path:created', function (e) {
+					this.setState({ room: { canvas: e.path.toJSON() } });
+					socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(canvas), self.room.name);
+				}.bind(this));
+				socket.on('updateCanvas', function (svg) {
+					fabric.util.enlivenObjects([svg], function (objects) {
+						console.log('objects', objects);
+						objects.forEach(function (o) {
+							canvas.add(o);
+						});
+					});
+				});
+				socket.on('hostEndSession', function () {
+					alert('Host has left this room');
+					window.location.href = '/';
+				});
 			}
-			// 	// this.state.canvas = new fabric.Canvas('canvas', {
-			// 	//  	  isDrawingMode: true,
-			// 	// 	});
-			// 	// this.state.canvas.freeDrawingBrush.width = 10;
-			// 	// this.setState({
-			// 	// 	canvas: canvas
-			// 	// });
-
-
-			// 	// socket.on('end', function () {
-			// 	//   console.log('drawing ended');
-			// 	//   var node = document.getElementsByClassName('drawingWrapper')[0]
-			// 	//   this.triggerMouseEvent(node, 'mouseup')
-			// 	//   image = JSON.stringify(canvas);
-			// 	//   canvas.clear();
-			// 	//   socket.removeListener('end');
-			// 	// }.bind(this));
-
-			// }
-
+		}, {
+			key: 'undo',
+			value: function undo() {
+				this.state.canvas.pop();
+				socket.emit('pathAdded');
+			}
 		}, {
 			key: 'endSession',
 			value: function endSession() {
+				var room = this.state.room.name;
+				var host = this.state.host;
+				console.log('deleted room: ', room);
+				socket.emit('endSession', room, host);
+				// window.location.href = '/';
 				socket.emit('disconnect');
-			}
-		}, {
-			key: 'draw',
-			value: function draw() {
-				socket.emit('draw', JSON.stringify(this.state.canvas));
-			}
-		}, {
-			key: 'triggerMouseEvent',
-			value: function triggerMouseEvent(node, eventType) {
-				var clickEvent = document.createEvent('MouseEvents');
-				clickEvent.initEvent(eventType, true, true);
-				node.dispatchEvent(clickEvent);
 			}
 		}, {
 			key: 'render',
@@ -27283,10 +27424,15 @@
 					'div',
 					{ className: 'drawingWrapper' },
 					_react2.default.createElement(
-						'div',
+						'button',
 						{ onClick: function onClick() {
-								_this2.draw();
+								_this2.undo();
 							} },
+						'undo'
+					),
+					_react2.default.createElement(
+						'div',
+						null,
 						_react2.default.createElement('canvas', { id: 'canvas', width: '375', height: '375' })
 					),
 					_react2.default.createElement(
@@ -27654,89 +27800,6 @@
 	}(_react2.default.Component);
 
 	exports.default = Vote;
-
-/***/ },
-/* 240 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	//Simple ready view
-	var CreateRoom = function (_React$Component) {
-		_inherits(CreateRoom, _React$Component);
-
-		function CreateRoom(props) {
-			_classCallCheck(this, CreateRoom);
-
-			return _possibleConstructorReturn(this, (CreateRoom.__proto__ || Object.getPrototypeOf(CreateRoom)).call(this, props));
-		}
-
-		_createClass(CreateRoom, [{
-			key: 'componentWillMount',
-			value: function componentWillMount() {
-				socket.on('enterRoom', function () {
-					//	window.Animal = animalName;
-					window.location.href = '#/drawing';
-					//redirect to countdown view
-				});
-			}
-		}, {
-			key: 'start',
-			value: function start(host) {
-				socket.emit('ready', host);
-			}
-		}, {
-			key: 'render',
-			value: function render() {
-				var _this2 = this;
-
-				return _react2.default.createElement(
-					'div',
-					{ className: 'readyScreen valign' },
-					_react2.default.createElement(
-						'h1',
-						{ className: 'tlt' },
-						' Create Rooom Session '
-					),
-					_react2.default.createElement('input', { type: 'text', id: 'hostTitle', placeholder: 'Title here...' }),
-					'Title:',
-					_react2.default.createElement('input', { id: 'hostVideo', type: 'text', placeholder: 'Video here...' }),
-					'Video URL:',
-					_react2.default.createElement('input', { id: 'hostName', type: 'text', placeholder: 'Name here...' }),
-					'Name:',
-					_react2.default.createElement(
-						'button',
-						{ className: 'btn waves-effect waves-light', value: 'Press this button when everyone is in', onClick: function onClick() {
-								var host = { title: document.getElementById('hostTitle').value, videoUrl: document.getElementById('hostVideo').value, name: document.getElementById('hostName').value };_this2.start(host);
-							} },
-						'Start a session!!'
-					)
-				);
-			}
-		}]);
-
-		return CreateRoom;
-	}(_react2.default.Component);
-
-	exports.default = CreateRoom;
 
 /***/ }
 /******/ ]);
