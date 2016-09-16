@@ -27233,13 +27233,6 @@
 					socket.removeListener('allRooms');
 				});
 
-				socket.emit('getRooms');
-
-				socket.on('allRooms', function (rooms) {
-					console.log('all rooms: ', rooms);
-					this.setState({ rooms: rooms });
-				}.bind(this));
-
 				socket.on('joined', function (didJoin, roomName, roomObj) {
 					if (didJoin) {
 						window.roomName = roomName;
@@ -27250,6 +27243,17 @@
 					} else {
 						console.log('That room does not exist');
 					}
+				});
+			}
+		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				var self = this;
+				socket.emit('getRooms');
+
+				socket.on('allRooms', function (rooms) {
+					console.log('all rooms: ', rooms);
+					self.setState({ rooms: rooms });
 				});
 			}
 		}, {
@@ -27364,7 +27368,8 @@
 					objects: []
 				},
 				host: false,
-				username: ''
+				username: '',
+				userColor: {}
 			};
 			return _this;
 		}
@@ -27381,6 +27386,16 @@
 		}, {
 			key: 'componentWillMount',
 			value: function componentWillMount() {
+				var colorString = function colorString() {
+					var rootLetter = '0123456789ABCDEF';
+					var result = '#';
+					for (var i = 0; i < 6; i++) {
+						result += rootLetter[Math.floor(Math.random() * 10) % 16];
+					}
+					return result;
+				};
+				var userColor = colorString();
+				this.state.userColor = { color: userColor };
 				var users = this.getUsers();
 				this.setState({
 					room: {
@@ -27402,18 +27417,11 @@
 					isDrawingMode: true
 				});
 				this.state.ownCanvas = canvas;
-				var colorString = function colorString() {
-					var rootLetter = '0123456789ABCDEF';
-					var result = '#';
-					for (var i = 0; i < 6; i++) {
-						result += rootLetter[Math.floor(Math.random() * 10) % 16];
-					}
-					return result;
-				};
 
 				self.state.ownCanvas.loadFromJSON(self.state.room.canvas, self.state.ownCanvas.renderAll.bind(self.state.ownCanvas));
 				self.state.ownCanvas.freeDrawingBrush.width = 10;
-				self.state.ownCanvas.freeDrawingBrush.color = colorString();
+				self.state.ownCanvas.freeDrawingBrush.color = self.state.userColor.color;
+
 				self.state.ownCanvas.on('path:created', function (e) {
 					var id = _uuid2.default.v4();
 					self.state.history.objects.push(e.path.toJSON());
@@ -27511,9 +27519,21 @@
 			value: function render() {
 				var _this2 = this;
 
+				console.log(this.state.userColor);
 				return _react2.default.createElement(
 					'div',
 					{ className: 'drawingWrapper' },
+					_react2.default.createElement(
+						'div',
+						null,
+						_react2.default.createElement(
+							'h3',
+							null,
+							'Welcome to ',
+							this.state.username[0],
+							'\'s Room!!'
+						)
+					),
 					_react2.default.createElement(
 						'button',
 						{ onClick: function onClick() {
@@ -27540,6 +27560,7 @@
 							} },
 						'End session'
 					),
+					_react2.default.createElement('div', null),
 					_react2.default.createElement(
 						'ul',
 						null,

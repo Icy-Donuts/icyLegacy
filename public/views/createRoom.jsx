@@ -21,12 +21,6 @@ export default class CreateRoom extends React.Component {
   		socket.removeListener('allRooms');
 		});
 
-    socket.emit('getRooms');
-
-    socket.on('allRooms', function(rooms) {
-    	console.log('all rooms: ', rooms);
-      this.setState({rooms: rooms});
-    }.bind(this));
 
 		socket.on('joined', function(didJoin, roomName, roomObj) {
 			if (didJoin) {
@@ -39,6 +33,16 @@ export default class CreateRoom extends React.Component {
 				console.log('That room does not exist');
 			}
 		});
+	}
+
+	componentDidMount() {
+		var self = this;
+    socket.emit('getRooms');
+
+    socket.on('allRooms', function(rooms) {
+    	console.log('all rooms: ', rooms);
+      self.setState({rooms: rooms});
+    });
 	}
 	
 	startSession(title, username) {
