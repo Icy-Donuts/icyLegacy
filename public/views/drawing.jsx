@@ -44,7 +44,6 @@ export default class Drawing extends React.Component {
 			socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(self.state.ownCanvas), self.state.room.name);
 		}.bind(this));
 		socket.on('updateCanvas', function(svg, leftVal) {
-      console.log(this.state.history);
       if (leftVal) {
         var x = svg;
         this.state.ownCanvas.loadFromJSON(JSON.stringify(svg), this.state.ownCanvas.renderAll.bind(this.state.ownCanvas));
@@ -80,11 +79,10 @@ export default class Drawing extends React.Component {
   }
 
 	endSession() {
-		console.log('this.state: ', this.state);
 		var room = this.state.room.name;
 		var host = this.state.host;
 		socket.emit('endSession', room, host);
-		window.location.href = '/';
+		// window.location.href = '/';
 		socket.emit('disconnect');
 	}
 

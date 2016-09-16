@@ -106,6 +106,7 @@ io.on('connection', function(socket) {
     if (isHost) {
       socket.broadcast.to(roomName).emit('hostEndSession');
       socket.in(roomName).leave(roomName);
+      console.log('RoomName= ', roomName, ' rooms[roomName]= ' + rooms[roomName]);
       delete rooms[roomName];
       console.log('rooms after deleting: ', rooms);
     } else {
