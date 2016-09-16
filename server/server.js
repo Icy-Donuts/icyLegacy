@@ -18,7 +18,6 @@ app.use(express.static('public'));
 app.use('/static', express.static(__dirname + '/../public'));
 app.use('/static', express.static(__dirname + '/../public/node_modules/fabric/dist'));
 
-var clients = {};
 var rooms = {};
 var rounds = 0;
 var queried = false;
@@ -64,20 +63,32 @@ io.on('connection', function(socket) {
 
   socket.on('pathAdded', function(path, svg, roomName) {
     rooms[roomName] = svg;
-    console.log('pathAdded: ', roomName);
     socket.broadcast.to(roomName).emit('updateCanvas', path);
   });
 
   socket.on('joinRoom', function(roomName) {
     var name = roomName.split(' ').join('');
-    console.log('joined rooms: ', rooms);
     if (rooms[name] !== undefined) {
       socket.join(name);
       socket.emit('joined', true, name, rooms[name]);
     } else {
       socket.emit('joined', false);
     }
+  });
 
+  socket.on('removePath', function(pathArr, leftValue, room) {
+    var allPaths = JSON.parse(rooms[room]);
+    console.log(pathArr);
+    var objects = [];
+    allPaths.objects.map(function(item) {
+      if (item.left !== leftValue) {
+        objects.push(item);
+      }
+    });
+    allPaths.objects = objects;
+    rooms[room] = JSON.stringify(allPaths);
+    console.log(rooms[room]);
+    io.to(room).emit('updateCanvas', allPaths, leftValue);
   });
 
   socket.on('endSession', function (roomName, isHost) {
@@ -95,6 +106,7 @@ io.on('connection', function(socket) {
     if (isHost) {
       socket.broadcast.to(roomName).emit('hostEndSession');
       socket.in(roomName).leave(roomName);
+      console.log('RoomName= ', roomName, ' rooms[roomName]= ' + rooms[roomName]);
       delete rooms[roomName];
       console.log('rooms after deleting: ', rooms);
     } else {
@@ -109,7 +121,15 @@ io.on('connection', function(socket) {
       roomsArr.push(room);
     }
     socket.emit('allRooms', roomsArr);
-  })
+  });
+
+  socket.on('clear', function(room) {
+    rooms[room] = '';
+  });
+
+  socket.on('undoTriggered', function() {
+    socket.emit('undo');
+  });
 
   socket.on('disconnect', function () {
     console.log('A SOCKET DISCONNECTED!');
