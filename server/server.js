@@ -29,7 +29,7 @@ app.post('/file_upload', function (req, res) {
   upload(req, res, function (err) {
     var dirnamemod = __dirname.replace('/server',"")
     var path = dirnamemod + "/public/assets/uploads/" + req.file.path.replace('public/assets/uploads/',"");
-    console.log('PATH',path);
+    // console.log('PATH',path);
     fs.rename(path,path.slice(0,path.indexOf('public/assets/uploads/')+22) + req.body.roomtitle.replace(" ",""),function(err){
       if(err){console.log(err);}
     })
@@ -43,34 +43,32 @@ app.post('/file_upload', function (req, res) {
 })
 
 io.on('connection', function(socket) {
-
-// <<<<<<< 6d60a4b5d0e61f0a8093a7b8406d66e122e7b7ae
-  socket.on('createRoom', function (name) {
-    name = name['host'];
-    var formatedRoomName = name.split(' ').join('');
-    rooms[formatedRoomName] = '';
-    console.log('created rooms: ', rooms);
+  socket.on('createRoom', function (roomname, username) {
+    var formatedRoomName = roomname.split(' ').join('');
+    rooms[formatedRoomName] = {};
+    rooms[formatedRoomName]['canvas'] = [];
+    rooms[formatedRoomName]['users'] = {};
+    rooms[formatedRoomName]['users'][socket.id] = username;
     socket.join(formatedRoomName);
     socket.emit('enterRoom', formatedRoomName, rooms[formatedRoomName]);
-// =======
-  // socket.on('createRoom', function (data) {
-  //   data = data['host']
-  //   rooms[data.split(' ').join('')] = data;
-  //   socket.join(data.split(' ').join(''));
-  //   socket.emit('enterRoom', data.split(' ').join(''), canvas);
-// >>>>>>> Send host boolean in object rather than as variable to server
   });
 
   socket.on('pathAdded', function(path, svg, roomName) {
-    rooms[roomName] = svg;
+    rooms[roomName].canvas = svg;
+    // console.log('pathAdded: ', roomName, ' from: ', socket.id);
+    path.id = rooms[roomName].users[socket.id];
+    // console.log('path: ', path);
     socket.broadcast.to(roomName).emit('updateCanvas', path);
   });
 
-  socket.on('joinRoom', function(roomName) {
+  socket.on('joinRoom', function(roomName, username) {
     var name = roomName.split(' ').join('');
     if (rooms[name] !== undefined) {
+      rooms[name].users[socket.id] = username;
+      // console.log('try to join: ', rooms[name]);
       socket.join(name);
       socket.emit('joined', true, name, rooms[name]);
+      socket.broadcast.to(roomName).emit('updateUser', rooms[name])
     } else {
       socket.emit('joined', false);
     }
@@ -78,7 +76,7 @@ io.on('connection', function(socket) {
 
   socket.on('removePath', function(pathArr, leftValue, room) {
     var allPaths = JSON.parse(rooms[room]);
-    console.log(pathArr);
+    // console.log(pathArr);
     var objects = [];
     allPaths.objects.map(function(item) {
       if (item.left !== leftValue) {
@@ -87,14 +85,15 @@ io.on('connection', function(socket) {
     });
     allPaths.objects = objects;
     rooms[room] = JSON.stringify(allPaths);
-    console.log(rooms[room]);
+    // console.log(rooms[room]);
     io.to(room).emit('updateCanvas', allPaths, leftValue);
   });
 
+
   socket.on('endSession', function (roomName, isHost) {
-    console.log('A session has ended!');
-    console.log('rooms beofre deleting: ', roomName);
-    console.log('isHost: ', isHost);
+    // console.log('A session has ended!');
+    // console.log('rooms beofre deleting: ', rooms);
+    // console.log('isHost: ', isHost);
 
     var dirnamemod = __dirname.replace('/server',"")
     var vidpath = dirnamemod + "/public/assets/uploads/" + roomName;
@@ -106,12 +105,14 @@ io.on('connection', function(socket) {
     if (isHost) {
       socket.broadcast.to(roomName).emit('hostEndSession');
       socket.in(roomName).leave(roomName);
-      console.log('RoomName= ', roomName, ' rooms[roomName]= ' + rooms[roomName]);
+      // console.log('RoomName= ', roomName, ' rooms[roomName]= ' + rooms[roomName]);
       delete rooms[roomName];
-      console.log('rooms after deleting: ', rooms);
+      // console.log('rooms after deleting: ', rooms);
     } else {
+      delete rooms[roomName].users[socket.id];
+      socket.broadcast.to(roomName).emit('updateUser', rooms[roomName]);
       socket.leave(roomName);
-      console.log('not host but deleted: ', rooms);
+      // console.log('not host but deleted: ', rooms);
     }
   });
 
