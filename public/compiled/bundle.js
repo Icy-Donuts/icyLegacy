@@ -27252,9 +27252,27 @@
 				});
 			}
 		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				var that = this;
+				console.log('I mounted');
+				console.log();
+				$('#submitted').on('click', function () {
+					console.log('Submitted');
+					setInterval(function () {
+						$('#createPageButton').click();
+					}, 2000);
+				});
+			}
+		}, {
 			key: 'startSession',
+// <<<<<<< 6d60a4b5d0e61f0a8093a7b8406d66e122e7b7ae
 			value: function startSession(title) {
-				socket.emit('createRoom', title);
+				socket.emit('createRoom', {host:title});
+// // =======
+// 			value: function startSession(host) {
+// 				socket.emit('createRoom', { host: host });
+// >>>>>>> Send host boolean in object rather than as variable to server
 				// document.getElementById('roomTitle').value = '';
 			}
 		}, {
@@ -27274,7 +27292,7 @@
 					_react2.default.createElement(
 						'h3',
 						{ className: 'tlt' },
-						' Join Rooom Session '
+						' Join Room Session '
 					),
 					_react2.default.createElement(
 						'ul',
@@ -27295,15 +27313,33 @@
 					_react2.default.createElement(
 						'h3',
 						{ className: 'tlt' },
-						' Create Rooom Session '
+						' Create Room Session '
 					),
-					_react2.default.createElement('input', { type: 'text', id: 'hostTitle', placeholder: 'Title here...' }),
+					_react2.default.createElement(
+						'form',
+						{ id: 'filesender', action: 'file_upload', encType: 'multipart/form-data', method: 'Post' },
+						_react2.default.createElement('input', { type: 'text', id: 'hostTitle', name: 'roomtitle', placeholder: 'Title here...' }),
+						_react2.default.createElement('input', { type: 'file', name: 'video' }),
+						_react2.default.createElement(
+							'button',
+							{ type: 'submit', id: 'submitted', className: 'btn waves-effect waves-light' },
+							'Create a room with this video'
+						)
+					),
+					_react2.default.createElement(
+						'script',
+						null,
+						'console.log(\'HEY\');$(\'#fname\').val(\'Hey\')'
+					),
 					_react2.default.createElement(
 						'button',
-						{
+						{ hidden: true,
+							id: 'createPageButton',
 							className: 'btn waves-effect waves-light',
 							onClick: function onClick() {
-								var title = document.getElementById('hostTitle').value;_this3.startSession(title);
+								var title = document.getElementById('hostTitle').value;
+
+								_this3.startSession(title);
 							} },
 						'Create a room'
 					)
@@ -27435,7 +27471,8 @@
 					_react2.default.createElement(
 						'div',
 						null,
-						_react2.default.createElement('canvas', { id: 'canvas', width: '375', height: '375' })
+						_react2.default.createElement('video', { controls: true, src: "/assets/uploads/" + window.roomName, width: '750', height: '750' }),
+						_react2.default.createElement('canvas', { id: 'canvas', width: '750', height: '700' })
 					),
 					_react2.default.createElement(
 						'button',

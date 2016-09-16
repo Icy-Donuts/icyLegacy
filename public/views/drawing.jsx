@@ -71,7 +71,8 @@ export default class Drawing extends React.Component {
 			<div className= "drawingWrapper" >
         <button onClick={() => {this.undo()}}>undo</button>
 				<div>
-					<canvas id="canvas" width="375" height="375" ></canvas>
+					<video controls src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
+					<canvas id="canvas" width="750" height="700" ></canvas>
 				</div>
 				<button onClick={() => {this.endSession();}}>End session</button>
 			</div>
