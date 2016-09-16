@@ -2,6 +2,8 @@
 node_modules
 public/compiled/
 public/node_modules/
+public/uploads
+public/videos
 .npm
 .node_repl_history
 logs
