@@ -27,7 +27,6 @@ export default class Drawing extends React.Component {
 	}
 
 	componentDidMount() {
-		console.log('window.roomName: ', window.roomName);
 		if (!window.roomName) {
 			window.location.href = '/';
 		}
@@ -35,7 +34,6 @@ export default class Drawing extends React.Component {
 			isDrawingMode: true,
 		});
     this.state.ownCanvas =  canvas;
-    console.log('state: ', this.state);
 		var self = this;
 		self.state.ownCanvas.loadFromJSON(self.state.room.canvas, self.state.ownCanvas.renderAll.bind(self.state.ownCanvas));
 		self.state.ownCanvas.freeDrawingBrush.width = 10;
@@ -46,14 +44,12 @@ export default class Drawing extends React.Component {
 			socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(self.state.ownCanvas), self.state.room.name);
 		}.bind(this));
 		socket.on('updateCanvas', function(svg, leftVal) {
+      console.log(this.state.history);
       if (leftVal) {
-        console.log('svg: ', svg.objects);
         var x = svg;
         this.state.ownCanvas.loadFromJSON(JSON.stringify(svg), this.state.ownCanvas.renderAll.bind(this.state.ownCanvas));
       } else {
 			  fabric.util.enlivenObjects([svg], function(objects) {
-          console.log('SVGGG: ', svg);
-          console.log('OBJECTSSS: ', objects);
 				  objects.forEach(function(o){
 					  self.state.ownCanvas.add(o);
 				  })
@@ -77,8 +73,6 @@ export default class Drawing extends React.Component {
       var toRemove = this.state.history.objects[this.state.history.objects.length - 1];
       console.log('one to remove, ', toRemove.left);
       this.state.history.objects.pop();
-      console.log(this.state.history.objects);
-      this.state.ownCanvas.loadFromJSON(JSON.stringify(this.state.history), this.state.ownCanvas.renderAll.bind(this.state.ownCanvas));
       socket.emit('removePath', this.state.history.objects, toRemove.left, this.state.room.name);
     } else {
       console.log('Nothing to undo :(');
@@ -89,7 +83,6 @@ export default class Drawing extends React.Component {
 		console.log('this.state: ', this.state);
 		var room = this.state.room.name;
 		var host = this.state.host;
-		console.log('deleted room: ', room);
 		socket.emit('endSession', room, host);
 		window.location.href = '/';
 		socket.emit('disconnect');
