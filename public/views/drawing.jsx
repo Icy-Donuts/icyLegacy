@@ -1,20 +1,25 @@
-import React from 'react'
+import React from 'react';
+import uuid from 'uuid';
 
 export default class Drawing extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
+      ownCanvas: '',
 		 	room: {
 		 		name: '',
 		 		canvas: ''
 		 	},
+      history: {
+        objects: []
+      },
 		 	host: false
 		}
 	}
 	componentWillMount() {
 	 	this.setState({
 	 		room: {
-	 			name: window.roomName, 
+	 			name: window.roomName,
 	 			canvas: window.canvas
 	 		},
 	 		host: window.host
@@ -26,34 +31,58 @@ export default class Drawing extends React.Component {
 		if (!window.roomName) {
 			window.location.href = '/';
 		}
-		var self = this.state;
 		var canvas = new fabric.Canvas('canvas', {
 			isDrawingMode: true,
 		});
-		canvas.loadFromJSON(self.room.canvas, canvas.renderAll.bind(canvas));
-		canvas.freeDrawingBrush.width = 10;
-		canvas.on('path:created', function(e) {
-  		this.state.room.canvas = e.path.toJSON();
-			socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(canvas), self.room.name);
+    this.state.ownCanvas =  canvas;
+    console.log('state: ', this.state);
+		var self = this;
+		self.state.ownCanvas.loadFromJSON(self.state.room.canvas, self.state.ownCanvas.renderAll.bind(self.state.ownCanvas));
+		self.state.ownCanvas.freeDrawingBrush.width = 10;
+		self.state.ownCanvas.on('path:created', function(e) {
+      var id = uuid.v4();
+      self.state.history.objects.push(e.path.toJSON());
+  		self.state.room.canvas = e.path.toJSON();
+			socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(self.state.ownCanvas), self.state.room.name);
 		}.bind(this));
-		socket.on('updateCanvas', function(svg) {
-			console.log('drawsss');
-			fabric.util.enlivenObjects([svg], function(objects) {
-        console.log('objects',objects);
-				objects.forEach(function(o){
-					canvas.add(o);
-				})
-			})
-		});
+		socket.on('updateCanvas', function(svg, leftVal) {
+      if (leftVal) {
+        console.log('svg: ', svg.objects);
+        var x = svg;
+        this.state.ownCanvas.loadFromJSON(JSON.stringify(svg), this.state.ownCanvas.renderAll.bind(this.state.ownCanvas));
+      } else {
+			  fabric.util.enlivenObjects([svg], function(objects) {
+          console.log('SVGGG: ', svg);
+          console.log('OBJECTSSS: ', objects);
+				  objects.forEach(function(o){
+					  self.state.ownCanvas.add(o);
+				  })
+			  })
+      }
+		}.bind(this));
+
 		socket.on('hostEndSession', function() {
 			alert('Host has left this room');
 			window.location.href = '/';
-		})
+		});
 	}
 
+  clear() {
+    self.state.canvas.clear();
+    socket.emit('clear');
+  }
+
   undo() {
-    this.state.canvas.pop();
-    socket.emit('pathAdded',);
+    if (this.state.history.objects.length > 0) {
+      var toRemove = this.state.history.objects[this.state.history.objects.length - 1];
+      console.log('one to remove, ', toRemove.left);
+      this.state.history.objects.pop();
+      console.log(this.state.history.objects);
+      this.state.ownCanvas.loadFromJSON(JSON.stringify(this.state.history), this.state.ownCanvas.renderAll.bind(this.state.ownCanvas));
+      socket.emit('removePath', this.state.history.objects, toRemove.left, this.state.room.name);
+    } else {
+      console.log('Nothing to undo :(');
+    }
   }
 
 	endSession() {
@@ -69,6 +98,7 @@ export default class Drawing extends React.Component {
 	render() {
 		return (
 			<div className= "drawingWrapper" >
+        <button onClick={() => {this.clear()}}>clear</button>
         <button onClick={() => {this.undo()}}>undo</button>
 				<div>
 					<video controls src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
