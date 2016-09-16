@@ -14,7 +14,8 @@ export default class Drawing extends React.Component {
         objects: []
       },
 		 	host: false,
-		 	username: ''
+		 	username: '',
+		 	userColor: {}
 		}
 	}
 
@@ -27,6 +28,16 @@ export default class Drawing extends React.Component {
 	}
 
 	componentWillMount() {
+		var colorString = function() {
+			var rootLetter = '0123456789ABCDEF';
+			var result = '#';
+			for (var i = 0; i < 6; i++) {
+				result += rootLetter[Math.floor(Math.random() * 10) % 16];
+			}
+			return result;
+		};
+		var userColor = colorString();
+		this.state.userColor = {color: userColor};
 		var users = this.getUsers();
 	 	this.setState({
 	 		room: {
@@ -47,18 +58,11 @@ export default class Drawing extends React.Component {
 			isDrawingMode: true,
 		});
 		this.state.ownCanvas = canvas;
-		var colorString = function() {
-			var rootLetter = '0123456789ABCDEF';
-			var result = '#';
-			for (var i = 0; i < 6; i++) {
-				result += rootLetter[Math.floor(Math.random() * 10) % 16];
-			}
-			return result;
-		};
 
 		self.state.ownCanvas.loadFromJSON(self.state.room.canvas, self.state.ownCanvas.renderAll.bind(self.state.ownCanvas));
 		self.state.ownCanvas.freeDrawingBrush.width = 10;
-		self.state.ownCanvas.freeDrawingBrush.color = colorString();
+		self.state.ownCanvas.freeDrawingBrush.color = self.state.userColor.color;
+		
 		self.state.ownCanvas.on('path:created', function(e) {
       var id = uuid.v4();
       self.state.history.objects.push(e.path.toJSON());
@@ -145,8 +149,10 @@ export default class Drawing extends React.Component {
 	}
 
 	render() {
+		console.log(this.state.userColor);
 		return (
 			<div className= "drawingWrapper" >
+			<div><h3>Welcome to {this.state.username[0]}'s Room!!</h3></div>
         <button onClick={() => {this.clear()}}>clear</button>
         <button onClick={() => {this.undo()}}>undo</button>
 				<div>
@@ -154,6 +160,7 @@ export default class Drawing extends React.Component {
 					<canvas id="canvas" width="750" height="700" ></canvas>
 				</div>
 				<button onClick={() => {this.endSession();}}>End session</button>
+				<div></div>
 				<ul>
 					{this.state.username.map(function(user, index) {
         return(

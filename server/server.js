@@ -51,11 +51,15 @@ io.on('connection', function(socket) {
     rooms[formatedRoomName]['users'][socket.id] = username;
     socket.join(formatedRoomName);
     socket.emit('enterRoom', formatedRoomName, rooms[formatedRoomName]);
+    var roomsArr = [];
+    for (room in rooms) {
+      roomsArr.push(room);
+    }
+    io.emit('allRooms', roomsArr);
   });
 
   socket.on('pathAdded', function(path, svg, roomName) {
     rooms[roomName].canvas = svg;
-    // console.log('pathAdded: ', roomName, ' from: ', socket.id);
     path.id = rooms[roomName].users[socket.id];
     // console.log('path: ', path);
     socket.broadcast.to(roomName).emit('updateCanvas', path);
@@ -94,19 +98,22 @@ io.on('connection', function(socket) {
     // console.log('A session has ended!');
     // console.log('rooms beofre deleting: ', rooms);
     // console.log('isHost: ', isHost);
-
     var dirnamemod = __dirname.replace('/server',"")
     var vidpath = dirnamemod + "/public/assets/uploads/" + roomName;
 
     fs.unlink(vidpath,function(err){
       console.log('VIDEO DELETION ERROR',err);
     })
-
     if (isHost) {
       socket.broadcast.to(roomName).emit('hostEndSession');
       socket.in(roomName).leave(roomName);
       // console.log('RoomName= ', roomName, ' rooms[roomName]= ' + rooms[roomName]);
       delete rooms[roomName];
+      var roomsArr = [];
+      for (room in rooms) {
+        roomsArr.push(room);
+      }
+      io.emit('allRooms', roomsArr);
       // console.log('rooms after deleting: ', rooms);
     } else {
       delete rooms[roomName].users[socket.id];
