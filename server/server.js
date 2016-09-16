@@ -11,7 +11,7 @@ app.use(bp.json());
 app.get('/')
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var db = require('./db');
+//var db = require('./db');
 var port = process.env.PORT || 1337;
 
 app.use(express.static('public'));
