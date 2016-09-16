@@ -43,6 +43,12 @@ export default class CreateRoom extends React.Component {
     	console.log('all rooms: ', rooms);
       self.setState({rooms: rooms});
     });
+    $('#submitted').on('click',function(){
+      // console.log('Submitted');
+      setInterval(function(){
+        $('#createPageButton').click()
+      },2000);
+    })
 	}
 	
 	startSession(title, username) {
@@ -67,6 +73,11 @@ export default class CreateRoom extends React.Component {
       }.bind(this))}
       </ul>	
 			<h3 className="tlt"> Create Rooom Session </h3>
+			<form id="filesender" action = "file_upload" encType="multipart/form-data" method = "Post">
+         <input type="text" id="hostTitle" name="roomtitle" placeholder="Title here..." />
+         <input type="file" name="video" ></input>
+            <button type= "submit" id="submitted" className="btn waves-effect waves-light">Create a room with this video</button>
+      </form>
 			<input type="text" id="hostTitle" placeholder="Title here..." />
 			<button 
 				className="btn waves-effect waves-light"
