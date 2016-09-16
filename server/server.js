@@ -52,7 +52,7 @@ io.on('connection', function(socket) {
     allPaths.objects = objects;
     rooms[room] = JSON.stringify(allPaths);
     console.log(rooms[room]);
-    socket.broadcast.to(room).emit('updateCanvas', allPaths, leftValue);
+    io.to(room).emit('updateCanvas', allPaths, leftValue);
   });
 
   socket.on('endSession', function (roomName, isHost) {
