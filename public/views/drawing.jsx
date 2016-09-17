@@ -171,6 +171,10 @@ export default class Drawing extends React.Component {
 
   	save(){
 		var thecanvas = document.createElement('canvas')
+		var notecanvas = document.createElement('canvas')
+		var ctx = notecanvas.getContext('2d');
+		ctx.font = "30px Arial";
+		ctx.fillText("Hello World",0,0);
 		var currentcanvas = document.getElementById('canvas');
 		var video = document.getElementById('video')
 		console.log('save')
