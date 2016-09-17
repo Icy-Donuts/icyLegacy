@@ -253,6 +253,7 @@ button {
 }
 #video {
   margin-top: -128px;
+  /*position: absolute;*/
 }
 .canvas-container {
   top: -750px;
@@ -286,4 +287,3 @@ button {
   top:32px;
   z-index:-6;
 }
-

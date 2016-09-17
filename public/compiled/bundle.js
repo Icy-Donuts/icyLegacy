@@ -54,11 +54,11 @@
 
 	var _reactRouter = __webpack_require__(172);
 
-	var _createRoom = __webpack_require__(235);
+	var _createRoom = __webpack_require__(236);
 
 	var _createRoom2 = _interopRequireDefault(_createRoom);
 
-	var _drawing = __webpack_require__(236);
+	var _drawing = __webpack_require__(237);
 
 	var _drawing2 = _interopRequireDefault(_drawing);
 
@@ -27097,7 +27097,8 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 235 */
+/* 235 */,
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27351,11 +27352,6 @@
 	            ),
 	            _react2.default.createElement(
 	              'button',
-	              null,
-	              'Streamold'
-	            ),
-	            _react2.default.createElement(
-	              'button',
 	              {
 	                id: 'createPageButton',
 	                onClick: function onClick() {
@@ -27377,7 +27373,7 @@
 	exports.default = CreateRoom;
 
 /***/ },
-/* 236 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27392,7 +27388,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _uuid = __webpack_require__(237);
+	var _uuid = __webpack_require__(238);
 
 	var _uuid2 = _interopRequireDefault(_uuid);
 
@@ -27464,8 +27460,12 @@
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
+				if (window.loadedFromFile) {
+					$('#streamingvideo').remove();
+				}
 				if (!window.loadedFromFile) {
 					if (window.streamer) {
+						$('#video').css({ position: 'absolute' });
 						navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
 						if (navigator.getUserMedia) {
@@ -27503,7 +27503,7 @@
 							// 		drawto(dataurl,ctx)
 						};
 
-						setInterval(draw, 100);
+						setInterval(draw, 300);
 						//var ctx = document.getElementById('canvas3').getContext('2d')
 						//		socket.on('broadcast',function(data){drawto(data.data,ctx)})
 
@@ -27535,6 +27535,7 @@
 
 							alert('YOU ARE NOT THE STREAMER');
 
+							$('#streamingvideo').remove();
 							ctx = document.getElementById('streamedto').getContext('2d');
 
 							socket.on('broadcast', function (data) {
@@ -27608,8 +27609,6 @@
 					console.log('Updated chats');
 					var chatholder = $('#chats');
 					chatholder.empty();
-					console.log(data);
-					//console.log(data.chats[window.roomName]);
 					if (window.roomName in data.chats) {
 						data.chats[window.roomName].forEach(function (chats) {
 							var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chats[1] + "</span></li>");
@@ -27917,7 +27916,7 @@
 	exports.default = Drawing;
 
 /***/ },
-/* 237 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//     uuid.js
@@ -27928,7 +27927,7 @@
 	// Unique ID creation requires a high quality random # generator.  We feature
 	// detect to determine the best RNG source, normalizing to a function that
 	// returns 128-bits of randomness, since that's what's usually required
-	var _rng = __webpack_require__(238);
+	var _rng = __webpack_require__(239);
 
 	// Maps for number <-> hex string conversion
 	var _byteToHex = [];
@@ -28106,7 +28105,7 @@
 
 
 /***/ },
-/* 238 */
+/* 239 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {

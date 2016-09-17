@@ -170,9 +170,6 @@ export default class CreateRoom extends React.Component {
               </button>
             </div>
           </form>
-          <button>
-               Streamold  
-          </button>
           <button
             id="createPageButton"
             onClick={() => {

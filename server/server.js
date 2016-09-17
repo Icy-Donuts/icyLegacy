@@ -85,7 +85,7 @@ io.on('connection', function(socket) {
     if(!chats[room]){
       chats[room] = [];
     }
-    // console.log(chats[room])
+    console.log(chats[room])
     room = data['room'],name = data.name, message = data.message;
     chats[room].push([name,message]);
     io.to(room).emit('updatechats', {chats:chats});
@@ -143,9 +143,9 @@ io.on('connection', function(socket) {
     io.emit('allRooms', roomsArr);
 
 
-    setInterval(function(){
-      socket.emit('updatechats',{chats:chats})
-    },2000)
+    // setInterval(function(){
+    //   socket.emit('updatechats',{chats:chats})
+    // },2000)
 
   });
 
@@ -168,9 +168,9 @@ io.on('connection', function(socket) {
       socket.emit('joined', false);
     }
 
-    setInterval(function(){
-      socket.emit('updatechats',{chats:chats})
-    },2000)
+    // setInterval(function(){
+    //   socket.emit('updatechats',{chats:chats})
+    // },2000)
 
 
     setTimeout(function(){socket.emit('sendStartTime',{time:videotimes[roomName],pausedbool:paused[roomName]});},1000)

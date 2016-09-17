@@ -51,8 +51,12 @@ export default class Drawing extends React.Component {
 	}
 
 	componentDidMount() {
+		if (window.loadedFromFile) {
+			$('#streamingvideo').remove();
+		}
 		if(!window.loadedFromFile){
 			if(window.streamer){
+				$('#video').css({position: 'absolute'});
 				navigator.getUserMedia = (navigator.getUserMedia || 
 	                          navigator.webkitGetUserMedia || 
 	                          navigator.mozGetUserMedia || 
@@ -100,7 +104,7 @@ export default class Drawing extends React.Component {
 	   		   	}
 
 	   	
-	   		setInterval(draw,100);
+	   		setInterval(draw,300);
 	   		//var ctx = document.getElementById('canvas3').getContext('2d')
 	   //		socket.on('broadcast',function(data){drawto(data.data,ctx)})
 
@@ -119,7 +123,7 @@ export default class Drawing extends React.Component {
 	} else {
 		alert('YOU ARE NOT THE STREAMER');
 
-
+			$('#streamingvideo').remove();
    		var ctx = document.getElementById('streamedto').getContext('2d')
    		socket.on('broadcast',function(data){drawto(data.data,ctx)})
 
@@ -205,8 +209,6 @@ export default class Drawing extends React.Component {
 			console.log('Updated chats');
 			var chatholder = $('#chats')
 			chatholder.empty();
-			console.log(data);
-			//console.log(data.chats[window.roomName]);
 			if(window.roomName in data.chats){
 				data.chats[window.roomName].forEach(function(chats){
 					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chats[1] + "</span></li>");
