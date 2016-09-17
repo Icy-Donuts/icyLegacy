@@ -102,6 +102,9 @@ h3 {
   display: flex;
   align-items: flex-start;
 }
+#createPageButton {
+  width: 100px;
+}
 .inline-input {
   margin-left: 24px;
   border: none;
