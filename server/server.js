@@ -22,6 +22,9 @@ var rooms = {};
 var rounds = 0;
 var queried = false;
 var images;
+var chats = {};
+var videotimes= {};
+var paused = {};
 
 //handles file uploads
 
@@ -70,7 +73,57 @@ if (NODE_ENV=production) {
 }
 
 io.on('connection', function(socket) {
+
+
+  socket.on('chatadded',function(data){
+    console.log(data);
+    var room = data['room'];
+    if(!chats[room]){
+      chats[room] = [];
+    }
+    console.log(chats[room])
+    room = data['room'],name = data.name, message = data.message;
+    chats[room].push([name,message]);
+    console.log(chats[room])
+    // console.log(chats);
+    // console.log(chats[room]);
+  })
+
+  socket.on('snapped',function(data){
+    console.log('Received new image');
+    io.sockets.emit('someoneSnapped',{image:data.image});
+  })
+
+  socket.on('updateTime',function(data){
+    videotimes[data.room] = data.time;
+    //console.log(videotimes);
+  })
+
+  socket.on('pause',function(data){
+   // console.log('Emitted pause')
+   paused[data.room] = true;
+   console.log(paused);
+    io.sockets.emit('pauseAll',{});
+  })
+
+  socket.on('play',function(){
+    io.sockets.emit('playAll',{});
+  })
+
+  socket.on('half',function(){
+    io.sockets.emit('halveAll',{});
+  })
+
+
+
   socket.on('createRoom', function (roomname, username) {
+
+    rooms[formatedRoomName] = '';
+    chats[formatedRoomName] = [];
+    videotimes[formatedRoomName] = 0;
+    console.log('CHATS',chats)
+
+
     var formatedRoomName = roomname.split(' ').join('');
     rooms[formatedRoomName] = {};
     rooms[formatedRoomName]['canvas'] = [];
@@ -82,7 +135,15 @@ io.on('connection', function(socket) {
     for (room in rooms) {
       roomsArr.push(room);
     }
+
+
     io.emit('allRooms', roomsArr);
+
+
+    setInterval(function(){
+      socket.emit('updatechats',{chats:chats})
+    },2000)
+
   });
 
   socket.on('pathAdded', function(path, svg, roomName) {
@@ -103,6 +164,15 @@ io.on('connection', function(socket) {
     } else {
       socket.emit('joined', false);
     }
+
+    setInterval(function(){
+      socket.emit('updatechats',{chats:chats})
+    },2000)
+
+
+    setTimeout(function(){socket.emit('sendStartTime',{time:videotimes[roomName],pausedbool:paused[roomName]});},1000)
+
+
   });
 
   socket.on('removePath', function(pathArr, leftValue, room) {
@@ -128,10 +198,13 @@ io.on('connection', function(socket) {
     var dirnamemod = __dirname.replace('/server',"")
     var vidpath = dirnamemod + "/public/assets/uploads/" + roomName;
 
-    fs.unlink(vidpath,function(err){
-      console.log('VIDEO DELETION ERROR',err);
-    })
+    // fs.unlink(vidpath,function(err){
+    //   console.log('VIDEO DELETION ERROR',err);
+    // })
     if (isHost) {
+      fs.unlink(vidpath,function(err){
+         console.log('VIDEO DELETION ERROR',err);
+       })
       socket.broadcast.to(roomName).emit('hostEndSession');
       socket.in(roomName).leave(roomName);
       // console.log('RoomName= ', roomName, ' rooms[roomName]= ' + rooms[roomName]);
