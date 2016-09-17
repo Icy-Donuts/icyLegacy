@@ -1,0 +1,168 @@
+/*CSS RESET*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* MAIN STYLEZ */
+
+.header {
+  height: 128px;
+  width: 100%;
+  background: #00E676;
+  margin-bottom: -32px;
+}
+body {
+  background: #EBEBEB;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+}
+.mainbody {
+  display: flex;
+  justify-content: center;
+}
+.card {
+  padding: 24px;
+  background: #fff;
+  border-radius: 3px;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+  margin-bottom: 16px;
+}
+.card-wide {
+  padding-top: 64px;
+  width: 692px;
+}
+input {
+  color: #333333;
+}
+h3 {
+  color: #000;
+  font-size: 20px;
+  margin-bottom: 24px;
+}
+.section {
+  display: flex;
+  justify-content: space-between;
+  width: 740px;
+}
+.card-medium {
+  flex: 1;
+}
+.card-medium + .card-medium {
+  margin-left: 16px;
+}
+.inline-input-container {
+  display: flex;
+  align-items: flex-start;
+}
+.inline-input {
+  margin-left: 24px;
+  border: none;
+  border-bottom: 1px solid #aaaaaa;
+  font-size: 20px;
+  line-height: 20px;
+  width: 370px;
+}
+.circle-icon {
+  background: #00E676;
+  border-radius: 50%;
+  height: 32px;
+  width: 32px;
+  text-align: center;
+  line-height: 32px;
+  margin: 8px 0;
+  color: #ffffff;
+}
+.room-list-items {
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+.room-list-items span{
+  font-weight: 600;
+  color: #aaaaaa;
+  margin-left: 16px;
+  pointer: cursor;
+}
+.block-input {
+  border: none;
+  border-bottom: 1px solid #aaaaaa;
+  width: 314px;
+  font-size: 14px;
+}
+.form-label-icon {
+  height: 36px;
+  margin: 16px 0;
+  padding: 0 16px 0 8px;
+  width: 120px;
+  color: #00E676;
+  display: flex;
+  justify-content: center;
+  text-transform: uppercase;
+  align-items: center;
+  cursor: pointer;
+}
+.form-label-icon i {
+  padding-right: 8px;
+}
+.button-cta {
+  cursor: pointer;
+  border: none;
+  height: 36px;
+  padding: 0 8px;
+  margin: 16px 0;
+  width: 120px;
+  font-size: 14px;
+  border-radius: 3px;
+  color: #ffffff;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  background: #00E676;
+  display: flex;
+  justify-content: center;
+  text-transform: uppercase;
+  align-items: center;
+}
+.duo-button-container {
+  display: flex;
+  justify-content: flex-end;
+}

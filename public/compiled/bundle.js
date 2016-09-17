@@ -58,7 +58,7 @@
 
 	var _name2 = _interopRequireDefault(_name);
 
-	var _createRoom = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./views/createRoom.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _createRoom = __webpack_require__(236);
 
 	var _createRoom2 = _interopRequireDefault(_createRoom);
 
@@ -27172,7 +27172,274 @@
 	exports.default = Name;
 
 /***/ },
-/* 236 */,
+/* 236 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	//Simple ready view
+	var CreateRoom = function (_React$Component) {
+	  _inherits(CreateRoom, _React$Component);
+
+	  function CreateRoom(props) {
+	    _classCallCheck(this, CreateRoom);
+
+	    var _this = _possibleConstructorReturn(this, (CreateRoom.__proto__ || Object.getPrototypeOf(CreateRoom)).call(this, props));
+
+	    _this.state = {
+	      rooms: []
+	    };
+	    return _this;
+	  }
+
+	  _createClass(CreateRoom, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      var idString = '/#' + socket.id;
+	      socket.on('enterRoom', function (roomName, roomObj) {
+	        window.roomName = roomName;
+	        window.canvas = roomObj.canvas;
+	        window.username = roomObj.users;
+	        window.host = true;
+	        window.location.href = '#/drawing';
+	        socket.removeListener('allRooms');
+	      });
+
+	      socket.on('joined', function (didJoin, roomName, roomObj) {
+	        if (didJoin) {
+	          window.roomName = roomName;
+	          window.host = false;
+	          window.canvas = roomObj.canvas;
+	          window.username = roomObj.users;
+	          window.location.href = '#/drawing';
+	        } else {
+	          console.log('That room does not exist');
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var self = this;
+	      socket.emit('getRooms');
+
+	      socket.on('allRooms', function (rooms) {
+	        console.log('all rooms: ', rooms);
+	        self.setState({ rooms: rooms });
+	      });
+	      $('#submitted').on('click', function () {
+	        // console.log('Submitted');
+	        setInterval(function () {
+	          $('#createPageButton').click();
+	        }, 2000);
+	      });
+	    }
+	  }, {
+	    key: 'startSession',
+	    value: function startSession(title, username) {
+	      socket.emit('createRoom', title, username);
+	      // document.getElementById('roomTitle').value = '';
+	    }
+	  }, {
+	    key: 'joinRoom',
+	    value: function joinRoom(roomName, username) {
+	      socket.emit('joinRoom', roomName, username);
+	      // document.getElementById('roomTitle').value = '';
+	    }
+	    // AWS get sign request for file
+	    //getSignedRequest(file) {
+	    //const xhr = new XMLHttpRequest();
+	    //xhr.open('GET', `/sign-s3?file-name=${file.name}&file-type=${file.type}`);
+	    //xhr.onreadystatechange = () => {
+	    //if (xhr.readyState === 4) {
+	    //if (xhr.status === 200) {
+	    //const response = JSON.parse(xhr.responseText);
+	    //uploadFile(file, response.signedRequest, response.url);
+	    //}
+	    //else {
+	    //console.log('Could not get signed url.');
+	    //}
+	    //}
+	    //};
+	    //xhr.send();
+	    //}
+	    //// Uploads file to AWS once the request is signed
+	    //uploadFile(file, signedRequest, url) {
+	    //const xhr = new XMLHttpRequest();
+	    //xhr.open('PUT', signedRequest);
+	    //xhr.onreadystatechange = () => {
+	    //if (xhr.readyState === 4) {
+	    //if (xhr.status === 200) {
+	    //document.getElementBeId('file').value=url;
+	    //}
+	    //else {
+	    //console.log('Could not upload file.');
+	    //}
+	    //}
+	    //}
+	    //xhr.send(file);
+	    //}
+
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'card card-wide' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'inline-input-container' },
+	            _react2.default.createElement(
+	              'h3',
+	              { className: 'tlt' },
+	              'Your name:'
+	            ),
+	            _react2.default.createElement('input', { type: 'text', className: 'inline-input', id: 'username' })
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'section' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'card card-medium' },
+	            _react2.default.createElement(
+	              'h3',
+	              { className: 'tlt' },
+	              'Join a room:'
+	            ),
+	            _react2.default.createElement(
+	              'ul',
+	              {
+	                className: 'room-list' },
+	              this.state.rooms.map(function (room, index) {
+	                var _this2 = this;
+
+	                return _react2.default.createElement(
+	                  'li',
+	                  {
+	                    className: 'room-list-items',
+	                    key: index,
+	                    onClick: function onClick() {
+	                      var username = document.getElementById('username').value;
+	                      _this2.joinRoom(room, username);
+	                    } },
+	                  _react2.default.createElement(
+	                    'i',
+	                    { className: 'material-icons circle-icon' },
+	                    'arrow_forward'
+	                  ),
+	                  _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    room
+	                  )
+	                );
+	              }.bind(this))
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'card card-medium' },
+	            _react2.default.createElement(
+	              'h3',
+	              {
+	                className: 'tlt' },
+	              'Create a room:'
+	            ),
+	            _react2.default.createElement(
+	              'form',
+	              { id: 'filesender',
+	                action: 'file_upload',
+	                encType: 'multipart/form-data',
+	                method: 'Post' },
+	              _react2.default.createElement('input', {
+	                className: 'block-input',
+	                type: 'text',
+	                name: 'roomtitle',
+	                id: 'hostTitle',
+	                placeholder: 'Title here...' }),
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'duo-button-container' },
+	                _react2.default.createElement(
+	                  'label',
+	                  {
+	                    className: 'form-label-icon',
+	                    htmlFor: 'file' },
+	                  _react2.default.createElement(
+	                    'i',
+	                    { className: 'material-icons' },
+	                    'file_upload'
+	                  ),
+	                  'upload file'
+	                ),
+	                _react2.default.createElement('input', {
+	                  hidden: true,
+	                  id: 'file',
+	                  type: 'file'
+	                  //onChange={()=> {
+	                  //const files = document.getElementById('file').files;
+	                  //const file = files[0];
+	                  //if (file === null) {
+	                  //return alert('No file selected');
+	                  //}
+	                  //this.getSignedRequest(file);
+	                  //}};
+	                  , name: 'video' }),
+	                _react2.default.createElement(
+	                  'button',
+	                  {
+	                    type: 'submit',
+	                    id: 'submitted',
+	                    className: 'button-cta' },
+	                  'Create room'
+	                )
+	              )
+	            ),
+	            _react2.default.createElement('button', {
+	              hidden: true,
+	              id: 'createPageButton',
+	              onClick: function onClick() {
+	                var title = document.getElementById('hostTitle').value;
+	                var username = document.getElementById('username').value;
+	                _this3.startSession(title, username);
+	              } })
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return CreateRoom;
+	}(_react2.default.Component);
+
+	exports.default = CreateRoom;
+
+/***/ },
 /* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
