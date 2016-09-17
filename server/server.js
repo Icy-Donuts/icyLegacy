@@ -24,6 +24,7 @@ var queried = false;
 var images;
 var chats = {};
 var videotimes= {};
+var paused = {};
 
 //handles file uploads
 app.post('/file_upload', function (req, res) {
@@ -66,8 +67,10 @@ io.on('connection', function(socket) {
     //console.log(videotimes);
   })
 
-  socket.on('pause',function(){
+  socket.on('pause',function(data){
    // console.log('Emitted pause')
+   paused[data.room] = true;
+   console.log(paused);
     io.sockets.emit('pauseAll',{});
   })
 
@@ -135,7 +138,7 @@ io.on('connection', function(socket) {
     },2000)
 
 
-    setTimeout(function(){socket.emit('sendStartTime',{time:videotimes[roomName]});},1000)
+    setTimeout(function(){socket.emit('sendStartTime',{time:videotimes[roomName],pausedbool:paused[roomName]});},1000)
 
 
   });

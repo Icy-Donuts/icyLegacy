@@ -127,6 +127,10 @@ export default class Drawing extends React.Component {
 				var vid = document.getElementById('video');
 				vid.currentTime = data.time;
 				vid.play();
+				console.log(data.pausedbool);
+				if(data.pausedbool){
+					vid.pause();
+				}
 			})
 		}
 
@@ -242,7 +246,7 @@ export default class Drawing extends React.Component {
         <button onClick={() => {this.clear()}}>clear</button>
         <button onClick={() => {this.undo()}}>undo</button>
         <button onClick = {function(){var vid = document.getElementById('video');vid.play();socket.emit('play')}}> Play </button>
-        <button onClick = {function(){var vid = document.getElementById('video');vid.pause();socket.emit('pause')}}> Pause </button>
+        <button onClick = {function(){var vid = document.getElementById('video');vid.pause();socket.emit('pause',{room:window.roomName})}}> Pause </button>
         <button onClick = {function(){ document.getElementById("video").playbackRate = 0.5;socket.emit('half')}}>Half-speed</button>
         <button onClick = {this.save}> Save </button>
         <button onClick = {this.writeOnCanvas}>Note</button>
