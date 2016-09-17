@@ -127,14 +127,14 @@ export default class CreateRoom extends React.Component {
       <input
           id="file"
           type="file"
-          onChange={()=> {
-            const files = document.getElementById('file').files;
-            const file = files[0];
-            if (file === null) {
-              return alert('No file selected');
-            }
-            this.getSignedRequest(file);
-          }};
+          //onChange={()=> {
+            //const files = document.getElementById('file').files;
+            //const file = files[0];
+            //if (file === null) {
+              //return alert('No file selected');
+            //}
+            //this.getSignedRequest(file);
+          //}};
           name="video" />
             <button
               type= "submit"
