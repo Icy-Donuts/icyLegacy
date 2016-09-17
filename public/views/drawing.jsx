@@ -285,6 +285,7 @@ export default class Drawing extends React.Component {
 
       <div className="video-container">
 				<div className="canvas-video-container">
+					<video id ="streamingvideo"></video>
 					<video id = "video" src = {"/assets/uploads/" + 'aaa'} width ="750" height="750"></video>
 					<canvas id="canvas" width="750" height="700" ></canvas>
 				</div>

@@ -112,8 +112,8 @@ io.on('connection', function(socket) {
 
 
 
-  socket.on('createRoom', function (roomname, username) {
-
+  socket.on('createRoom', function (roomname, username,streamer) {
+    console.log('STREAMER',streamer);
     var formatedRoomName = roomname.split(' ').join('');
     // rooms[formatedRoomName] = '';
     chats[formatedRoomName] = [];
@@ -126,7 +126,7 @@ io.on('connection', function(socket) {
     rooms[formatedRoomName]['users'] = {};
     rooms[formatedRoomName]['users'][socket.id] = username;
     socket.join(formatedRoomName);
-    socket.emit('enterRoom', formatedRoomName, rooms[formatedRoomName]);
+    socket.emit('enterRoom', formatedRoomName, rooms[formatedRoomName],streamer);
     var roomsArr = [];
     for (room in rooms) {
       roomsArr.push(room);

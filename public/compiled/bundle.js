@@ -27139,10 +27139,11 @@
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
 	      var idString = '/#' + socket.id;
-	      socket.on('enterRoom', function (roomName, roomObj) {
+	      socket.on('enterRoom', function (roomName, roomObj, streamer) {
 	        window.roomName = roomName;
 	        window.canvas = roomObj.canvas;
 	        window.username = roomObj.users;
+	        window.streamer = streamer;
 	        window.host = true;
 	        window.location.href = '#/drawing';
 	        socket.removeListener('allRooms');
@@ -27179,8 +27180,8 @@
 	    }
 	  }, {
 	    key: 'startSession',
-	    value: function startSession(title, username) {
-	      socket.emit('createRoom', title, username);
+	    value: function startSession(title, username, streamer) {
+	      socket.emit('createRoom', title, username, streamer);
 	      // document.getElementById('roomTitle').value = '';
 	    }
 	  }, {
@@ -27716,6 +27717,7 @@
 						_react2.default.createElement(
 							'div',
 							{ className: 'canvas-video-container' },
+							_react2.default.createElement('video', { id: 'streamingvideo' }),
 							_react2.default.createElement('video', { id: 'video', src: "/assets/uploads/" + 'aaa', width: '750', height: '750' }),
 							_react2.default.createElement('canvas', { id: 'canvas', width: '750', height: '700' })
 						),

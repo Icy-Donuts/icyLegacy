@@ -12,10 +12,11 @@ export default class CreateRoom extends React.Component {
 
 	componentWillMount() {
 		var idString = '/#' + socket.id;
-		socket.on('enterRoom', function(roomName, roomObj) {
+		socket.on('enterRoom', function(roomName, roomObj,streamer) {
 			window.roomName = roomName;
   		window.canvas = roomObj.canvas;
   		window.username = roomObj.users;
+      window.streamer = streamer;
 			window.host = true;
 			window.location.href = '#/drawing';
   		socket.removeListener('allRooms');
@@ -50,8 +51,8 @@ export default class CreateRoom extends React.Component {
       },2000);
     })
 	}
-	startSession(title, username) {
-		socket.emit('createRoom', title, username);
+	startSession(title, username,streamer) {
+		socket.emit('createRoom', title, username,streamer);
 		// document.getElementById('roomTitle').value = '';
 	}
 
