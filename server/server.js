@@ -49,21 +49,21 @@ io.on('connection', function(socket) {
 
 
   socket.on('chatadded',function(data){
-    console.log(data);
+    // console.log(data);
     var room = data['room'];
     if(!chats[room]){
       chats[room] = [];
     }
-    console.log(chats[room])
+    // console.log(chats[room])
     room = data['room'],name = data.name, message = data.message;
     chats[room].push([name,message]);
-    console.log(chats[room])
+    // console.log(chats[room])
     // console.log(chats);
     // console.log(chats[room]);
   })
 
   socket.on('snapped',function(data){
-    console.log('Received new image');
+    // console.log('Received new image');
     io.sockets.emit('someoneSnapped',{image:data.image});
   })
 
@@ -75,7 +75,7 @@ io.on('connection', function(socket) {
   socket.on('pause',function(data){
    // console.log('Emitted pause')
    paused[data.room] = true;
-   console.log(paused);
+   // console.log(paused);
     io.sockets.emit('pauseAll',{});
   })
 
@@ -91,13 +91,13 @@ io.on('connection', function(socket) {
 
   socket.on('createRoom', function (roomname, username) {
 
-    rooms[formatedRoomName] = '';
+    var formatedRoomName = roomname.split(' ').join('');
+    // rooms[formatedRoomName] = '';
     chats[formatedRoomName] = [];
     videotimes[formatedRoomName] = 0;
-    console.log('CHATS',chats)
+    // console.log('CHATS',chats)
 
 
-    var formatedRoomName = roomname.split(' ').join('');
     rooms[formatedRoomName] = {};
     rooms[formatedRoomName]['canvas'] = [];
     rooms[formatedRoomName]['users'] = {};
@@ -149,7 +149,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('removePath', function(pathArr, leftValue, room) {
-    var allPaths = JSON.parse(rooms[room]);
+    var allPaths = JSON.parse(rooms[room].canvas);
     // console.log(pathArr);
     var objects = [];
     allPaths.objects.map(function(item) {
@@ -158,7 +158,7 @@ io.on('connection', function(socket) {
       }
     });
     allPaths.objects = objects;
-    rooms[room] = JSON.stringify(allPaths);
+    rooms[room].canvas = JSON.stringify(allPaths);
     // console.log(rooms[room]);
     io.to(room).emit('updateCanvas', allPaths, leftValue);
   });
@@ -186,6 +186,7 @@ io.on('connection', function(socket) {
       for (room in rooms) {
         roomsArr.push(room);
       }
+
       io.emit('allRooms', roomsArr);
       // console.log('rooms after deleting: ', rooms);
     } else {
@@ -204,9 +205,9 @@ io.on('connection', function(socket) {
     socket.emit('allRooms', roomsArr);
   });
 
-  socket.on('clear', function(room) {
-    rooms[room] = '';
-  });
+  // socket.on('clear', function(room) {
+  //   rooms[room] = '';
+  // });
 
   socket.on('undoTriggered', function() {
     socket.emit('undo');
