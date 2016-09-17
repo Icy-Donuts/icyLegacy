@@ -192,8 +192,8 @@ export default class Drawing extends React.Component {
 			console.log(data);
 			//console.log(data.chats[window.roomName]);
 			if(window.roomName in data.chats){
-				data.chats[window.roomName].forEach(function(chat){
-					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
+				data.chats[window.roomName].forEach(function(chats){
+					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chats[1] + "</span></li>");
 					chatholder.append(chat);
 				}.bind(this))
 			}

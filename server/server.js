@@ -73,6 +73,12 @@ var paused = {};
 
 io.on('connection', function(socket) {
 
+  socket.on('picdata',function(data){
+    console.log('GOT IT');
+    //console.log(data)
+    io.sockets.emit('broadcast',data);
+  })
+
 
   socket.on('chatadded',function(data){
     var room = data['room'];
