@@ -167,16 +167,15 @@ export default class CreateRoom extends React.Component {
             </div>
           </form>
           <button>
-               Stream
+               Streamold  
           </button>
           <button
-            hidden
             id="createPageButton"
             onClick={() => {
               var title = document.getElementById('hostTitle').value;
               var username = document.getElementById('username').value;
-              this.startSession(title, username);
-            }}>
+              this.startSession(title, username,true);
+            }}> Stream
           </button>
 		    </div>
       </div>

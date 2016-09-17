@@ -27348,16 +27348,19 @@
 	            _react2.default.createElement(
 	              'button',
 	              null,
-	              'Stream'
+	              'Streamold'
 	            ),
-	            _react2.default.createElement('button', {
-	              hidden: true,
-	              id: 'createPageButton',
-	              onClick: function onClick() {
-	                var title = document.getElementById('hostTitle').value;
-	                var username = document.getElementById('username').value;
-	                _this3.startSession(title, username);
-	              } })
+	            _react2.default.createElement(
+	              'button',
+	              {
+	                id: 'createPageButton',
+	                onClick: function onClick() {
+	                  var title = document.getElementById('hostTitle').value;
+	                  var username = document.getElementById('username').value;
+	                  _this3.startSession(title, username, true);
+	                } },
+	              ' Stream'
+	            )
 	          )
 	        )
 	      );
