@@ -73,6 +73,12 @@ var paused = {};
 
 io.on('connection', function(socket) {
 
+  socket.on('picdata',function(data){
+   // console.log(data);
+    //console.log(data)
+    io.sockets.emit('broadcast',data);
+  })
+
 
   socket.on('chatadded',function(data){
     var room = data['room'];
@@ -112,8 +118,8 @@ io.on('connection', function(socket) {
 
 
 
-  socket.on('createRoom', function (roomname, username) {
-
+  socket.on('createRoom', function (roomname, username,streamer,loadedfromfile) {
+    console.log('STREAMER',streamer);
     var formatedRoomName = roomname.split(' ').join('');
     // rooms[formatedRoomName] = '';
     chats[formatedRoomName] = [];
@@ -126,7 +132,8 @@ io.on('connection', function(socket) {
     rooms[formatedRoomName]['users'] = {};
     rooms[formatedRoomName]['users'][socket.id] = username;
     socket.join(formatedRoomName);
-    socket.emit('enterRoom', formatedRoomName, rooms[formatedRoomName]);
+    console.log('SERVERSIDEFILE',loadedfromfile)
+    socket.emit('enterRoom', formatedRoomName, rooms[formatedRoomName],streamer,loadedfromfile);
     var roomsArr = [];
     for (room in rooms) {
       roomsArr.push(room);

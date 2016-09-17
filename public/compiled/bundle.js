@@ -54,29 +54,24 @@
 
 	var _reactRouter = __webpack_require__(172);
 
-	var _name = __webpack_require__(235);
-
-	var _name2 = _interopRequireDefault(_name);
-
-	var _createRoom = __webpack_require__(236);
+	var _createRoom = __webpack_require__(235);
 
 	var _createRoom2 = _interopRequireDefault(_createRoom);
 
-	var _drawing = __webpack_require__(237);
+	var _drawing = __webpack_require__(236);
 
 	var _drawing2 = _interopRequireDefault(_drawing);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	//BIG NOTE:  We only used react router to setup routes.  We move from view to view using window.location.href
-
-
+	// import Name from './name.jsx'
 	(0, _reactDom.render)(_react2.default.createElement(
 	  _reactRouter.Router,
 	  { history: _reactRouter.hashHistory },
 	  _react2.default.createElement(_reactRouter.Route, { path: '/', component: _createRoom2.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: '/drawing', component: _drawing2.default })
 	), document.getElementById('app'));
+	//BIG NOTE:  We only used react router to setup routes.  We move from view to view using window.location.href
 
 /***/ },
 /* 1 */
@@ -27108,76 +27103,6 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	//the starting view shown when you load the game
-
-	var Name = function (_React$Component) {
-		_inherits(Name, _React$Component);
-
-		function Name(props) {
-			_classCallCheck(this, Name);
-
-			return _possibleConstructorReturn(this, (Name.__proto__ || Object.getPrototypeOf(Name)).call(this, props));
-		}
-
-		_createClass(Name, [{
-			key: 'sendName',
-			value: function sendName(player) {
-				socket.emit('name', player);
-			}
-		}, {
-			key: 'componentWillMount',
-			value: function componentWillMount() {
-				socket.on('readyView', function () {
-					window.location.href = '#/ready';
-				});
-			}
-		}, {
-			key: 'render',
-			value: function render() {
-				return _react2.default.createElement(
-					'div',
-					{ className: 'user-register z-depth-1 valign' },
-					_react2.default.createElement('input', { type: 'text', id: 'player', placeholder: 'stumpy the kitty' }),
-					_react2.default.createElement(
-						'button',
-						{ className: 'btn waves-effect waves-light', value: 'Submit', onClick: function () {
-								this.sendName(document.getElementById('player').value);
-							}.bind(this) },
-						'submit'
-					)
-				);
-			}
-		}]);
-
-		return Name;
-	}(_react2.default.Component);
-
-	exports.default = Name;
-
-/***/ },
-/* 236 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 
@@ -27213,12 +27138,15 @@
 	  _createClass(CreateRoom, [{
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
+	      window.loadedFromFile = false;
 	      var idString = '/#' + socket.id;
-	      socket.on('enterRoom', function (roomName, roomObj) {
+	      socket.on('enterRoom', function (roomName, roomObj, streamer, fromfile) {
 	        window.roomName = roomName;
 	        window.canvas = roomObj.canvas;
 	        window.username = roomObj.users;
+	        window.streamer = streamer;
 	        window.host = true;
+	        window.loadedFromFile = fromfile;
 	        window.location.href = '#/drawing';
 	        socket.removeListener('allRooms');
 	      });
@@ -27247,6 +27175,7 @@
 	      });
 	      $('#submitted').on('click', function () {
 	        // console.log('Submitted');
+	        window.loadedFromFile = true;
 	        setInterval(function () {
 	          $('#createPageButton').click();
 	        }, 2000);
@@ -27254,8 +27183,8 @@
 	    }
 	  }, {
 	    key: 'startSession',
-	    value: function startSession(title, username) {
-	      socket.emit('createRoom', title, username);
+	    value: function startSession(title, username, streamer, file) {
+	      socket.emit('createRoom', title, username, streamer, file);
 	      // document.getElementById('roomTitle').value = '';
 	    }
 	  }, {
@@ -27420,14 +27349,22 @@
 	                )
 	              )
 	            ),
-	            _react2.default.createElement('button', {
-	              hidden: true,
-	              id: 'createPageButton',
-	              onClick: function onClick() {
-	                var title = document.getElementById('hostTitle').value;
-	                var username = document.getElementById('username').value;
-	                _this3.startSession(title, username);
-	              } })
+	            _react2.default.createElement(
+	              'button',
+	              null,
+	              'Streamold'
+	            ),
+	            _react2.default.createElement(
+	              'button',
+	              {
+	                id: 'createPageButton',
+	                onClick: function onClick() {
+	                  var title = document.getElementById('hostTitle').value;
+	                  var username = document.getElementById('username').value;
+	                  _this3.startSession(title, username, true, window.loadedFromFile);
+	                } },
+	              ' Stream'
+	            )
 	          )
 	        )
 	      );
@@ -27440,7 +27377,7 @@
 	exports.default = CreateRoom;
 
 /***/ },
-/* 237 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27455,7 +27392,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _uuid = __webpack_require__(238);
+	var _uuid = __webpack_require__(237);
 
 	var _uuid2 = _interopRequireDefault(_uuid);
 
@@ -27511,6 +27448,7 @@
 					}
 					return result;
 				};
+
 				var userColor = colorString();
 				this.state.userColor = { color: userColor };
 				var users = this.getUsers();
@@ -27526,6 +27464,85 @@
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
+				if (!window.loadedFromFile) {
+					if (window.streamer) {
+						navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+						if (navigator.getUserMedia) {
+							console.log('here');
+							navigator.getUserMedia({
+								video: true,
+								audio: false
+							}, function (stream) {
+								var v = document.getElementById('streamingvideo');
+								var url = window.URL || window.webkitURL;
+								v.src = url ? url.createObjectURL(stream) : stream;
+								v.play();
+							}, function (error) {/* do something */});
+						}
+						// else {
+						//    alert('Sorry, the browser you are using doesn\'t support getUserMedia');
+						//    return;
+						//  }
+						var draw = function draw() {
+							var video = document.querySelector('video');
+							var canvas = document.getElementById('fakecanvas');
+							//console.log('CANVAS',canvas)
+							canvas.width = 750;
+							canvas.height = 460;
+							canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+							//var ctx = document.getElementById('canvas2').getContext('2d')
+							var dataurl = canvas.toDataURL();
+							//dataurl = JSON.stringify(dataurl).slice(Math.floor(dataurl.length/3))
+							// $.ajax({
+							// 	method:'POST',
+							// 	url:'http://localhost:3000/posted',
+							// 	data: {url:dataurl}
+							// })
+							socket.emit('picdata', { data: dataurl });
+							// 		drawto(dataurl,ctx)
+						};
+
+						setInterval(draw, 100);
+						//var ctx = document.getElementById('canvas3').getContext('2d')
+						//		socket.on('broadcast',function(data){drawto(data.data,ctx)})
+
+						//	function drawto(url,ctx) {
+						//	    var img = new Image();
+						//
+						//		    img.setAttribute('crossOrigin', 'anonymous');
+						//		    img.onload = function(){
+						//		  		ctx.drawImage(img,0,0); // Or at whatever offset you like
+						//			};
+						//			img.src = url;
+
+						//		}
+						//LOADING FROM FILE logic ends here
+					} else {
+						var ctx;
+
+						(function () {
+							var drawto = function drawto(url, ctx) {
+								//console.log(url);
+								var img = new Image();
+
+								img.setAttribute('crossOrigin', 'anonymous');
+								img.onload = function () {
+									ctx.drawImage(img, 0, 0); // Or at whatever offset you like
+								};
+								img.src = url;
+							};
+
+							alert('YOU ARE NOT THE STREAMER');
+
+							ctx = document.getElementById('streamedto').getContext('2d');
+
+							socket.on('broadcast', function (data) {
+								drawto(data.data, ctx);
+							});
+						})();
+					}
+				}
 				//if (!window.roomName) {
 				//window.location.href = '/';
 				//}
@@ -27558,7 +27575,7 @@
 				socket.on('updateCanvas', function (svg, leftVal) {
 					if (leftVal) {
 						var x = svg;
-						self.state.room.canvas = svg;
+						this.state.ownCanvas.loadFromJSON(JSON.stringify(svg), this.state.ownCanvas.renderAll.bind(this.state.ownCanvas));
 					} else {
 						fabric.util.enlivenObjects([svg], function (objects) {
 							objects.forEach(function (o) {
@@ -27594,68 +27611,70 @@
 					console.log(data);
 					//console.log(data.chats[window.roomName]);
 					if (window.roomName in data.chats) {
-						data.chats[window.roomName].forEach(function (chat) {
-							var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + this.state.username + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
+						data.chats[window.roomName].forEach(function (chats) {
+							var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chats[1] + "</span></li>");
 							chatholder.append(chat);
 						}.bind(this));
 					}
 				}.bind(this));
 
-				if (this.state.host) {
-					document.getElementById('video').addEventListener('loadedmetadata', function () {
-						this.currentTime = 2;this.play();
-					}, false);
+				if (window.loadedFromFile) {
+					if (this.state.host) {
+						document.getElementById('video').addEventListener('loadedmetadata', function () {
+							this.currentTime = 2;this.play();
+						}, false);
 
-					setInterval(function () {
-						var video = document.getElementById('video');
-						var ct = video.currentTime;
-						//console.log(ct);
-						socket.emit('updateTime', { room: window.roomName, time: ct });
-					}, 1000);
-				} else {
-					socket.on('sendStartTime', function (data) {
-						console.log('started');
+						setInterval(function () {
+							var video = document.getElementById('video');
+							var ct = video.currentTime;
+							//console.log(ct);
+							socket.emit('updateTime', { room: window.roomName, time: ct });
+						}, 1000);
+					} else {
+						socket.on('sendStartTime', function (data) {
+							console.log('started');
+							var vid = document.getElementById('video');
+							vid.currentTime = data.time;
+							vid.play();
+							console.log(data.pausedbool);
+							if (data.pausedbool) {
+								vid.pause();
+							}
+						});
+					}
+
+					socket.on('someoneSnapped', function (data) {
+						console.log('Someone has a question');
+						console.log(data.image);
+						//console.log($('#snappedoverlay'));
+						//$('#snappedoverlay').append($(data.image));
+						//document.getElementById('snappedoverlay').appendChild(data.image);
+					});
+
+					socket.on('pauseAll', function (data) {
+						console.log('HEARD PAUSE');
 						var vid = document.getElementById('video');
-						vid.currentTime = data.time;
+						vid.pause();
+					});
+
+					socket.on('playAll', function (data) {
+						console.log('HEARD PLAY');
+						var vid = document.getElementById('video');
 						vid.play();
-						console.log(data.pausedbool);
-						if (data.pausedbool) {
-							vid.pause();
-						}
+					});
+
+					socket.on('halveAll', function () {
+						var vid = document.getElementById('video');
+						vid.playbackRate = 0.5;
 					});
 				}
-
-				socket.on('someoneSnapped', function (data) {
-					console.log('Someone has a question');
-					console.log(data.image);
-					//console.log($('#snappedoverlay'));
-					//$('#snappedoverlay').append($(data.image));
-					//document.getElementById('snappedoverlay').appendChild(data.image);
-				});
-
-				socket.on('pauseAll', function (data) {
-					console.log('HEARD PAUSE');
-					var vid = document.getElementById('video');
-					vid.pause();
-				});
-
-				socket.on('playAll', function (data) {
-					console.log('HEARD PLAY');
-					var vid = document.getElementById('video');
-					vid.play();
-				});
-
-				socket.on('halveAll', function () {
-					var vid = document.getElementById('video');
-					vid.playbackRate = 0.5;
-				});
 			}
-		}, {
-			key: 'clear',
-			value: function clear() {
-				self.state.canvas.clear();
-				socket.emit('clear');
-			}
+
+			// clear() {
+			//   self.state.canvas.clear();
+			//   socket.emit('clear');
+			// }
+
 		}, {
 			key: 'undo',
 			value: function undo() {
@@ -27711,7 +27730,7 @@
 				var host = this.state.host;
 				var username = this.state.username;
 				socket.emit('endSession', room, host);
-				// window.location.href = '/';
+				window.location.href = '/';
 				socket.emit('disconnect');
 			}
 		}, {
@@ -27763,7 +27782,8 @@
 										className: 'send-icon',
 										id: 'newChatSubmit', onClick: function onClick() {
 											var chatMessage = $('#chatMessage').val();
-											socket.emit('chatadded', { message: chatMessage, room: window.roomName });
+											var username = window.username['/#' + socket.id];
+											socket.emit('chatadded', { name: username, message: chatMessage, room: window.roomName });
 											$('#chatMessage').val('');
 										} },
 									_react2.default.createElement(
@@ -27781,8 +27801,11 @@
 						_react2.default.createElement(
 							'div',
 							{ className: 'canvas-video-container' },
-							_react2.default.createElement('video', { id: 'video', src: "/assets/uploads/" + 'aaa', width: '750', height: '750' }),
-							_react2.default.createElement('canvas', { id: 'canvas', width: '750', height: '700' })
+							_react2.default.createElement('video', { id: 'streamingvideo' }),
+							_react2.default.createElement('video', { id: 'video', src: "/assets/uploads/" + window.roomName, width: '750', height: '750' }),
+							_react2.default.createElement('canvas', { id: 'canvas', width: '750', height: '700' }),
+							_react2.default.createElement('canvas', { id: 'streamedto', width: '750', height: '700' }),
+							_react2.default.createElement('canvas', { id: 'fakecanvas', width: '750', height: '700' })
 						),
 						_react2.default.createElement(
 							'div',
@@ -27894,7 +27917,7 @@
 	exports.default = Drawing;
 
 /***/ },
-/* 238 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//     uuid.js
@@ -27905,7 +27928,7 @@
 	// Unique ID creation requires a high quality random # generator.  We feature
 	// detect to determine the best RNG source, normalizing to a function that
 	// returns 128-bits of randomness, since that's what's usually required
-	var _rng = __webpack_require__(239);
+	var _rng = __webpack_require__(238);
 
 	// Maps for number <-> hex string conversion
 	var _byteToHex = [];
@@ -28083,7 +28106,7 @@
 
 
 /***/ },
-/* 239 */
+/* 238 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
