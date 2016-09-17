@@ -27273,7 +27273,7 @@
 	                    className: 'room-list-items',
 	                    key: index,
 	                    onClick: function onClick() {
-	                      var username = document.getElementById('username').value;
+	                      var username = document.getElementById('username').value || 'guest';
 	                      _this2.joinRoom(room, username);
 	                    } },
 	                  _react2.default.createElement(
@@ -27342,6 +27342,23 @@
 	                'upload file'
 	              ),
 	              _react2.default.createElement(
+	                'button',
+	                {
+	                  id: 'createPageButton',
+	                  className: 'form-label-icon',
+	                  onClick: function onClick() {
+	                    var title = document.getElementById('hostTitle').value || 'DemoRoom';
+	                    var username = document.getElementById('username').value || 'guest';
+	                    _this3.startSession(title, username, true, window.loadedFromFile);
+	                  } },
+	                _react2.default.createElement(
+	                  'i',
+	                  { className: 'material-icons' },
+	                  'flash_on'
+	                ),
+	                'Stream'
+	              ),
+	              _react2.default.createElement(
 	                'div',
 	                { className: 'button-flex-wrapper' },
 	                _react2.default.createElement(
@@ -27353,17 +27370,6 @@
 	                  'Create room'
 	                )
 	              )
-	            ),
-	            _react2.default.createElement(
-	              'button',
-	              {
-	                id: 'createPageButton',
-	                onClick: function onClick() {
-	                  var title = document.getElementById('hostTitle').value;
-	                  var username = document.getElementById('username').value;
-	                  _this3.startSession(title, username, true, window.loadedFromFile);
-	                } },
-	              ' Stream'
 	            )
 	          )
 	        )
@@ -27614,8 +27620,8 @@
 					var chatholder = $('#chats');
 					chatholder.empty();
 					if (window.roomName in data.chats) {
-						data.chats[window.roomName].forEach(function (chat) {
-							var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
+						data.chats[window.roomName].forEach(function (chats) {
+							var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chats[1] + "</span></li>");
 							chatholder.prepend(chat);
 						}.bind(this));
 					}

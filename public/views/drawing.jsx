@@ -57,9 +57,9 @@ export default class Drawing extends React.Component {
 		if(!window.loadedFromFile){
 			if(window.streamer){
 				$('#video').css({position: 'absolute'});
-				navigator.getUserMedia = (navigator.getUserMedia || 
-	                          navigator.webkitGetUserMedia || 
-	                          navigator.mozGetUserMedia || 
+				navigator.getUserMedia = (navigator.getUserMedia ||
+	                          navigator.webkitGetUserMedia ||
+	                          navigator.mozGetUserMedia ||
 	                          navigator.msGetUserMedia);
 
 			   if (navigator.getUserMedia) {
@@ -68,9 +68,9 @@ export default class Drawing extends React.Component {
 			         {
 			            video:true,
 			            audio:false
-			         },        
-			         function(stream) {  
-			          var v= document.getElementById('streamingvideo');	
+			         },
+			         function(stream) {
+			          var v= document.getElementById('streamingvideo');
 			          var url = window.URL || window.webkitURL;
 	                  v.src = url ? url.createObjectURL(stream) : stream;
 	                  v.play();
@@ -100,10 +100,8 @@ export default class Drawing extends React.Component {
 	   		// })
 	   		socket.emit('picdata',{data:dataurl})
 	  // 		drawto(dataurl,ctx)
-	   		
 	   		   	}
 
-	   	
 	   		setInterval(draw,300);
 	   		//var ctx = document.getElementById('canvas3').getContext('2d')
 	   //		socket.on('broadcast',function(data){drawto(data.data,ctx)})
@@ -210,8 +208,8 @@ export default class Drawing extends React.Component {
 			var chatholder = $('#chats')
 			chatholder.empty();
 			if(window.roomName in data.chats){
-				data.chats[window.roomName].forEach(function(chat){
-					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
+				data.chats[window.roomName].forEach(function(chats){
+					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chats[1] + "</span></li>");
 					chatholder.prepend(chat);
 				}.bind(this))
 			}

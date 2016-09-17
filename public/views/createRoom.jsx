@@ -117,7 +117,7 @@ export default class CreateRoom extends React.Component {
                 className="room-list-items"
                 key={index}
                 onClick={() => {
-                  var username = document.getElementById('username').value;
+                  var username = document.getElementById('username').value || 'guest';
                   this.joinRoom(room, username);
                   }}>
                 <i className="material-icons circle-icon">arrow_forward</i>
@@ -166,6 +166,19 @@ export default class CreateRoom extends React.Component {
             <i className="material-icons">file_upload</i>
             upload file
           </label>
+          <button
+            id="createPageButton"
+            className='form-label-icon'
+            onClick={() => {
+              var title = document.getElementById('hostTitle').value || 'DemoRoom';
+              var username = document.getElementById('username').value || 'guest';
+              this.startSession(title, username,true,window.loadedFromFile);
+            }}>
+            <i className="material-icons">
+              flash_on
+            </i>
+            Stream
+          </button>
 
               <div className="button-flex-wrapper">
               <button
@@ -176,14 +189,6 @@ export default class CreateRoom extends React.Component {
                 </button>
               </div>
           </form>
-          <button
-            id="createPageButton"
-            onClick={() => {
-              var title = document.getElementById('hostTitle').value;
-              var username = document.getElementById('username').value;
-              this.startSession(title, username,true,window.loadedFromFile);
-            }}> Stream
-          </button>
 		    </div>
       </div>
     </div>
