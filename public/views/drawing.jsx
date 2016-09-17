@@ -243,8 +243,10 @@ export default class Drawing extends React.Component {
         <button onClick = {this.save}> Save </button>
         <button onClick = {this.writeOnCanvas}>Note</button>
 				<div>
+					<div id="vidcanvasparent">
 					<video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
 					<canvas id="canvas" width="750" height="700" ></canvas>
+					</div>
 					<div id="chatsholder">
 						<ul id="chats"></ul>
 						<input id="userNameInput" class="chatinput" placeholder = "Enter your username" ></input>
