@@ -53,9 +53,6 @@ export default class Drawing extends React.Component {
 	componentDidMount() {
 		if(!window.loadedFromFile){
 			if(window.streamer){
-
-
-
 				navigator.getUserMedia = (navigator.getUserMedia || 
 	                          navigator.webkitGetUserMedia || 
 	                          navigator.mozGetUserMedia || 
@@ -82,8 +79,6 @@ export default class Drawing extends React.Component {
 			   //    alert('Sorry, the browser you are using doesn\'t support getUserMedia');
 			   //    return;
 			   //  }
-
-
 			   	var draw = function() {
 			var video = document.querySelector('video');
 			var canvas = document.getElementById('fakecanvas')
@@ -120,6 +115,9 @@ export default class Drawing extends React.Component {
 
 	//		}
 	//LOADING FROM FILE logic ends here
+
+	} else {
+		alert('YOU ARE NOT THE STREAMER');
 	}
 
 		}

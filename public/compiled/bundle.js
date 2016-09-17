@@ -27466,7 +27466,6 @@
 			value: function componentDidMount() {
 				if (!window.loadedFromFile) {
 					if (window.streamer) {
-
 						navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
 						if (navigator.getUserMedia) {
@@ -27485,8 +27484,6 @@
 						//    alert('Sorry, the browser you are using doesn\'t support getUserMedia');
 						//    return;
 						//  }
-
-
 						var draw = function draw() {
 							var video = document.querySelector('video');
 							var canvas = document.getElementById('fakecanvas');
@@ -27521,6 +27518,8 @@
 
 						//		}
 						//LOADING FROM FILE logic ends here
+					} else {
+						alert('YOU ARE NOT THE STREAMER');
 					}
 				}
 				//if (!window.roomName) {
