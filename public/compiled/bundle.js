@@ -27307,34 +27307,39 @@
 	                name: 'roomtitle',
 	                id: 'hostTitle',
 	                placeholder: 'Title here...' }),
+	              _react2.default.createElement('input', {
+	                hidden: true,
+	                id: 'file',
+	                type: 'file',
+	                onChange: function onChange() {
+	                  $('#filelabel').addClass('hasFile');
+	                  $('#filelabel').text('X remove file');
+	                }
+	                //onChange={()=> {
+	                //const files = document.getElementById('file').files;
+	                //const file = files[0];
+	                //if (file === null) {
+	                //return alert('No file selected');
+	                //}
+	                //this.getSignedRequest(file);
+	                //}};
+	                , name: 'video' }),
+	              _react2.default.createElement(
+	                'label',
+	                {
+	                  id: 'filelabel',
+	                  className: 'form-label-icon',
+	                  htmlFor: 'file' },
+	                _react2.default.createElement(
+	                  'i',
+	                  { className: 'material-icons' },
+	                  'file_upload'
+	                ),
+	                'upload file'
+	              ),
 	              _react2.default.createElement(
 	                'div',
-	                { className: 'duo-button-container' },
-	                _react2.default.createElement(
-	                  'label',
-	                  {
-	                    className: 'form-label-icon',
-	                    htmlFor: 'file' },
-	                  _react2.default.createElement(
-	                    'i',
-	                    { className: 'material-icons' },
-	                    'file_upload'
-	                  ),
-	                  'upload file'
-	                ),
-	                _react2.default.createElement('input', {
-	                  hidden: true,
-	                  id: 'file',
-	                  type: 'file'
-	                  //onChange={()=> {
-	                  //const files = document.getElementById('file').files;
-	                  //const file = files[0];
-	                  //if (file === null) {
-	                  //return alert('No file selected');
-	                  //}
-	                  //this.getSignedRequest(file);
-	                  //}};
-	                  , name: 'video' }),
+	                { className: 'button-flex-wrapper' },
 	                _react2.default.createElement(
 	                  'button',
 	                  {
@@ -27522,7 +27527,7 @@
 					if (window.roomName in data.chats) {
 						data.chats[window.roomName].forEach(function (chat) {
 							var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
-							chatholder.append(chat);
+							chatholder.prepend(chat);
 						}.bind(this));
 					}
 				}.bind(this));
@@ -27611,15 +27616,17 @@
 				var dataURL = thecanvas.toDataURL();
 
 				//create img
+				var container = document.createElement('div');
+				container.setAttribute('class', 'thumbnail-photo-sizer');
 				var img = document.createElement('img');
-				img.width = 250;
-				img.height = 250;
 				img.setAttribute('src', dataURL);
+				img.setAttribute('class', 'thumbnail-photo');
+				container.appendChild(img);
 
 				socket.emit('snapped', { image: img });
 
 				//append img in container div
-				document.getElementById('thumbnailContainer').appendChild(img);
+				document.getElementById('thumbnailContainer').appendChild(container);
 			}
 		}, {
 			key: 'writeonCanvas',
@@ -27729,7 +27736,7 @@
 							_react2.default.createElement(
 								'div',
 								{ className: 'canvas-video-container' },
-								_react2.default.createElement('video', { id: 'video', src: "/assets/uploads/" + 'aaa', width: '750', height: '750' }),
+								_react2.default.createElement('video', { id: 'video', src: "/assets/uploads/" + window.roomName, width: '750', height: '750' }),
 								_react2.default.createElement('canvas', { id: 'canvas', width: '750', height: '700' })
 							),
 							_react2.default.createElement(
@@ -27838,48 +27845,6 @@
 								_react2.default.createElement(
 									'ul',
 									null,
-									_react2.default.createElement(
-										'li',
-										{ className: 'user-list-entry' },
-										_react2.default.createElement(
-											'span',
-											{ className: 'list-user-name' },
-											'Jordan'
-										),
-										_react2.default.createElement(
-											'span',
-											{ className: 'list-user-span' },
-											'filter drawings'
-										)
-									),
-									_react2.default.createElement(
-										'li',
-										{ className: 'user-list-entry' },
-										_react2.default.createElement(
-											'span',
-											{ className: 'list-user-name' },
-											'Yu-An'
-										),
-										_react2.default.createElement(
-											'span',
-											{ className: 'list-user-span' },
-											'filter drawings'
-										)
-									),
-									_react2.default.createElement(
-										'li',
-										{ className: 'user-list-entry' },
-										_react2.default.createElement(
-											'span',
-											{ className: 'list-user-name' },
-											'David'
-										),
-										_react2.default.createElement(
-											'span',
-											{ className: 'list-user-span' },
-											'filter drawings'
-										)
-									),
 									this.state.username.map(function (user, index) {
 										var _this3 = this;
 

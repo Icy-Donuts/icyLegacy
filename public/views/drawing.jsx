@@ -122,7 +122,7 @@ export default class Drawing extends React.Component {
 			if(window.roomName in data.chats){
 				data.chats[window.roomName].forEach(function(chat){
 					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
-					chatholder.append(chat);
+					chatholder.prepend(chat);
 				}.bind(this))
 			}
 		}.bind(this))
@@ -206,15 +206,17 @@ export default class Drawing extends React.Component {
 	    var dataURL = thecanvas.toDataURL();
 
 	    //create img
-	    var img = document.createElement('img');
-	    img.width = 250;
-	    img.height = 250;
+      var container = document.createElement('div');
+	    container.setAttribute('class', 'thumbnail-photo-sizer');
+      var img = document.createElement('img');
 	    img.setAttribute('src', dataURL);
+      img.setAttribute('class', 'thumbnail-photo');
+      container.appendChild(img)
 
 	    socket.emit('snapped',{image:img});
 
 	    //append img in container div
-	    document.getElementById('thumbnailContainer').appendChild(img);
+	    document.getElementById('thumbnailContainer').appendChild(container);
 
 	}
 
@@ -297,7 +299,7 @@ export default class Drawing extends React.Component {
           </button>
           <div className="main-video">
 			  	  <div className="canvas-video-container">
-			  		  <video id = "video" src = {"/assets/uploads/" + 'aaa'} width ="750" height="750"></video>
+			  		  <video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
 			  		  <canvas id="canvas" width="750" height="700" ></canvas>
 			  	  </div>
             <div className="actions">
@@ -353,20 +355,6 @@ export default class Drawing extends React.Component {
               <h3>Users</h3>
               <h5>Currently in this chat</h5>
               <ul>
-                <li className="user-list-entry">
-                  <span className="list-user-name">Jordan</span>
-                  <span className="list-user-span">filter drawings</span>
-                </li>
-                <li className="user-list-entry">
-                  <span className="list-user-name">Yu-An</span>
-                  <span className="list-user-span">filter drawings</span>
-                </li>
-                <li className="user-list-entry">
-                  <span className="list-user-name">David</span>
-                  <span className="list-user-span">filter drawings</span>
-                </li>
-
-
 		            {this.state.username.map(function(user, index) {
                   return(
                     <li key={index}

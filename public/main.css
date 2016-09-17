@@ -133,7 +133,6 @@ h3 {
 .form-label-icon {
   height: 36px;
   margin: 16px 0;
-  padding: 0 16px 0 8px;
   width: 120px;
   color: #00E676;
   display: flex;
@@ -150,7 +149,6 @@ h3 {
   border: none;
   height: 36px;
   padding: 0 8px;
-  margin: 16px 0;
   width: 120px;
   font-size: 14px;
   border-radius: 3px;
@@ -162,7 +160,7 @@ h3 {
   text-transform: uppercase;
   align-items: center;
 }
-.duo-button-container {
+.button-flex-wrapper {
   display: flex;
   justify-content: flex-end;
 }
@@ -171,6 +169,10 @@ h3 {
   width: 100%;
   margin-top: 32px;
   justify-content: space-between;
+}
+.hasFile {
+  color: #aaa;
+  border-bottom: 3px solid #aaa;
 }
 #chatsholder {
   width: 384px;
@@ -362,6 +364,16 @@ h5 {
   text-transform: uppercase;
   font-weight: bold;
   cursor: pointer;
+}
+.thumbnail-photo-sizer {
+  margin-top: 24px;
+  max-height: 272px;
+  max-width: 200px;
+  overflow: hidden;
+}
+.thumbnail-photo {
+  width: 100%;
+  height: auto;
 }
 
 
