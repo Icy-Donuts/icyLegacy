@@ -75,6 +75,13 @@ body {
 input {
   color: #333333;
 }
+h1 {
+  color: #fff;
+  font-size: 32px;
+  line-height: 128px;
+  margin-left: 48px;
+  letter-spacing: 1px;
+}
 h3 {
   color: #000;
   font-size: 20px;
@@ -134,6 +141,7 @@ h3 {
   height: 36px;
   margin: 16px 0;
   width: 120px;
+  font-size: 14px;
   color: #00E676;
   display: flex;
   justify-content: center;
@@ -143,6 +151,9 @@ h3 {
 }
 .form-label-icon i {
   padding-right: 8px;
+}
+button {
+  padding-left: 0;
 }
 .button-cta {
   cursor: pointer;
