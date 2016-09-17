@@ -96,6 +96,61 @@ export default class Drawing extends React.Component {
 			alert('Host has left this room');
 			window.location.href = '/';
 		});
+
+
+		socket.on('updatechats',function(data){
+			console.log('Updated chats');
+			var chatholder = $('#chats')
+			chatholder.empty();
+			console.log(data);
+			//console.log(data.chats[window.roomName]);
+			if(window.roomName in data.chats){
+				data.chats[window.roomName].forEach(function(chat){
+					var chat = $('<li>' + chat[0] + ":" + chat[1] + "</li>");
+					chatholder.append(chat);
+				})
+			}
+		})
+
+		if(this.state.host){
+			document.getElementById('video').addEventListener('loadedmetadata', function() {this.currentTime = 2;this.play()}, false);
+
+			setInterval(function(){
+				var video = document.getElementById('video');
+				var ct = video.currentTime;
+				//console.log(ct);
+				socket.emit('updateTime',{room:window.roomName,time:ct})
+			},1000)
+		} else {
+			socket.on('sendStartTime',function(data){
+				console.log('started');
+				var vid = document.getElementById('video');
+				vid.currentTime = data.time;
+				vid.play();
+			})
+		}
+
+
+		socket.on('pauseAll',function(data){
+			console.log('HEARD PAUSE');
+			var vid = document.getElementById('video');
+			vid.pause();
+		})
+
+		socket.on('playAll',function(data){
+			console.log('HEARD PLAY');
+			var vid = document.getElementById('video');
+			vid.play();
+		})
+
+		socket.on('halveAll',function(){
+			var vid = document.getElementById('video');
+			vid.playbackRate = 0.5;
+		})
+
+
+
+
 	}
 
   clear() {
@@ -113,6 +168,35 @@ export default class Drawing extends React.Component {
       console.log('Nothing to undo :(');
     }
   }
+
+  	save(){
+		var thecanvas = document.createElement('canvas')
+		var currentcanvas = document.getElementById('canvas');
+		var video = document.getElementById('video')
+		console.log('save')
+		var context = thecanvas.getContext('2d');
+	    context.drawImage(video, 0, 0, 220, 150);
+	    context.drawImage(currentcanvas,0,0,250,150);
+	    var dataURL = thecanvas.toDataURL();
+
+	    //create img
+	    var img = document.createElement('img');
+	    img.width = 250;
+	    img.height = 250;
+	    img.setAttribute('src', dataURL);
+
+	    //append img in container div
+	    document.getElementById('thumbnailContainer').appendChild(img);
+
+	}
+
+		writeonCanvas(){
+
+		var canvas = document.getElementByType('canvas');
+		var ctx = canvas.getContext('2d');
+		ctx.font = "30px Arial";
+		ctx.fillText("Hello World",0,0);
+	}
 
 	endSession() {
 		var room = this.state.room.name;
@@ -153,9 +237,25 @@ export default class Drawing extends React.Component {
 			<div><h3>Welcome to {this.state.username[0]}'s Room!!</h3></div>
         <button onClick={() => {this.clear()}}>clear</button>
         <button onClick={() => {this.undo()}}>undo</button>
+        <button onClick = {function(){var vid = document.getElementById('video');vid.play();socket.emit('play')}}> Play </button>
+        <button onClick = {function(){var vid = document.getElementById('video');vid.pause();socket.emit('pause')}}> Pause </button>
+        <button onClick = {function(){ document.getElementById("video").playbackRate = 0.5;socket.emit('half')}}>Half-speed</button>
+        <button onClick = {this.save}> Save </button>
+        <button onClick = {this.writeOnCanvas}>Note</button>
 				<div>
-					<video controls src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
+					<video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
 					<canvas id="canvas" width="750" height="700" ></canvas>
+					<div id="chatsholder">
+						<ul id="chats"></ul>
+						<input id="userNameInput" class="chatinput" placeholder = "Enter your username" ></input>
+						<input id="chatMessage" class="chatinput" placeholder = "Enter your message" ></input>
+						<button id="newChatSubmit" onClick = {()=>{
+							var username = $('#userNameInput').val()
+							var chatMessage = $('#chatMessage').val();
+							socket.emit('chatadded',{name:username,message:chatMessage,room:window.roomName})
+						}}>Submit Chat</button>
+					</div>
+					<div id="thumbnailContainer"></div>
 				</div>
 				<button onClick={() => {this.endSession();}}>End session</button>
 				<div></div>
