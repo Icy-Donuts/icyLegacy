@@ -36,6 +36,7 @@ export default class Drawing extends React.Component {
 			}
 			return result;
 		};
+
 		var userColor = colorString();
 		this.state.userColor = {color: userColor};
 		var users = this.getUsers();
@@ -83,6 +84,7 @@ export default class Drawing extends React.Component {
       if (leftVal) {
         console.log('svg: ', svg.objects);
         var x = svg;
+        this.state.ownCanvas.loadFromJSON(JSON.stringify(svg), this.state.ownCanvas.renderAll.bind(this.state.ownCanvas));
       } else {
 			  fabric.util.enlivenObjects([svg], function(objects) {
 				  objects.forEach(function(o){
@@ -106,7 +108,7 @@ export default class Drawing extends React.Component {
 			//console.log(data.chats[window.roomName]);
 			if(window.roomName in data.chats){
 				data.chats[window.roomName].forEach(function(chat){
-					var chat = $('<li>' + chat[0] + ":" + chat[1] + "</li>");
+					var chat = $('<li>' + chat[0] + ": " + chat[1] + "</li>");
 					chatholder.append(chat);
 				})
 			}
@@ -164,10 +166,10 @@ export default class Drawing extends React.Component {
 
 	}
 
-  clear() {
-    self.state.canvas.clear();
-    socket.emit('clear');
-  }
+  // clear() {
+  //   self.state.canvas.clear();
+  //   socket.emit('clear');
+  // }
 
   undo() {
     if (this.state.history.objects.length > 0) {
@@ -220,7 +222,7 @@ export default class Drawing extends React.Component {
 		var host = this.state.host;
 		var username = this.state.username;
 		socket.emit('endSession', room, host);
-		// window.location.href = '/';
+		window.location.href = '/';
 		socket.emit('disconnect');
 	}
 
@@ -252,7 +254,6 @@ export default class Drawing extends React.Component {
 		return (
 			<div className= "drawingWrapper" >
 			<div><h3>Welcome to {this.state.username[0]}'s Room!!</h3></div>
-        <button onClick={() => {this.clear()}}>clear</button>
         <button onClick={() => {this.undo()}}>undo</button>
         <button onClick = {function(){var vid = document.getElementById('video');vid.play();socket.emit('play')}}> Play </button>
         <button onClick = {function(){var vid = document.getElementById('video');vid.pause();socket.emit('pause',{room:window.roomName})}}> Pause </button>
@@ -267,12 +268,13 @@ export default class Drawing extends React.Component {
 					</div>
 					<div id="chatsholder">
 						<ul id="chats"></ul>
-						<input id="userNameInput" class="chatinput" placeholder = "Enter your username" ></input>
 						<input id="chatMessage" class="chatinput" placeholder = "Enter your message" ></input>
 						<button id="newChatSubmit" onClick = {()=>{
-							var username = $('#userNameInput').val()
+							
+							var username = window.username['/#' + socket.id];
 							var chatMessage = $('#chatMessage').val();
-							socket.emit('chatadded',{name:username,message:chatMessage,room:window.roomName})
+							socket.emit('chatadded',{name:username,message:chatMessage,room:window.roomName});
+							$('#chatMessage').val('');
 						}}>Submit Chat</button>
 					</div>
 					<div id="thumbnailContainer"></div>
