@@ -62,6 +62,10 @@ export default class CreateRoom extends React.Component {
 	}
 
 	render() {
+  //  	<input type="text" id="hostTitle" name="roomtitle" placeholder="Title here..." />
+		// <button className="btn waves-effect waves-light">
+		// 	Create a room
+		// </button>
 		return (
 		<div className="readyScreen valign">
 		<input type="text" id="username" placeholder="Username here..." />
@@ -74,16 +78,11 @@ export default class CreateRoom extends React.Component {
       </ul>	
 			<h3 className="tlt"> Create Rooom Session </h3>
 			<form id="filesender" action = "file_upload" encType="multipart/form-data" method = "Post">
-         <input type="text" id="hostTitle" name="roomtitle" placeholder="Title here..." />
+			<input type="text" name="roomtitle" id="hostTitle" placeholder="Title here..." />
          <input type="file" name="video" ></input>
-            <button type= "submit" id="submitted" className="btn waves-effect waves-light">Create a room with this video</button>
+            <button type= "submit" id="submitted" className="btn waves-effect waves-light" >Create a room with this video</button>
       </form>
-			<input type="text" id="hostTitle" placeholder="Title here..." />
-			<button 
-				className="btn waves-effect waves-light"
-				onClick={() => {var title = document.getElementById('hostTitle').value; var username = document.getElementById('username').value; this.startSession(title, username)}}>
-				Create a room
-			</button>
+      <button hidden id="createPageButton" onClick={() => {var title = document.getElementById('hostTitle').value; var username = document.getElementById('username').value; this.startSession(title, username)}}></button>
 		</div>
 	)}
 }

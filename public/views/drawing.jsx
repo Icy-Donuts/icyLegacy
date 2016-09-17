@@ -83,8 +83,6 @@ export default class Drawing extends React.Component {
       if (leftVal) {
         console.log('svg: ', svg.objects);
         var x = svg;
-        this.state.ownCanvas.loadFromJSON(JSON.stringify(svg), this.state.ownCanvas.renderAll.bind(this.state.ownCanvas));
- //       fabric.util.enlivenObjects([obje])
       } else {
 			  fabric.util.enlivenObjects([svg], function(objects) {
 				  objects.forEach(function(o){
