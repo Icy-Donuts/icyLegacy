@@ -36,6 +36,7 @@ export default class Drawing extends React.Component {
 			}
 			return result;
 		};
+
 		var userColor = colorString();
 		this.state.userColor = {color: userColor};
 		var users = this.getUsers();
@@ -82,7 +83,7 @@ export default class Drawing extends React.Component {
 		socket.on('updateCanvas', function(svg, leftVal) {
       if (leftVal) {
         var x = svg;
-        self.state.room.canvas = svg;
+        this.state.ownCanvas.loadFromJSON(JSON.stringify(svg), this.state.ownCanvas.renderAll.bind(this.state.ownCanvas));
       } else {
 			  fabric.util.enlivenObjects([svg], function(objects) {
 				  objects.forEach(function(o){
@@ -120,7 +121,7 @@ export default class Drawing extends React.Component {
 			//console.log(data.chats[window.roomName]);
 			if(window.roomName in data.chats){
 				data.chats[window.roomName].forEach(function(chat){
-					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + this.state.username + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
+					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
 					chatholder.append(chat);
 				}.bind(this))
 			}
@@ -174,10 +175,10 @@ export default class Drawing extends React.Component {
 		})
 	}
 
-  clear() {
-    self.state.canvas.clear();
-    socket.emit('clear');
-  }
+  // clear() {
+  //   self.state.canvas.clear();
+  //   socket.emit('clear');
+  // }
 
   undo() {
     if (this.state.history.objects.length > 0) {
@@ -230,7 +231,7 @@ export default class Drawing extends React.Component {
 		var host = this.state.host;
 		var username = this.state.username;
 		socket.emit('endSession', room, host);
-		// window.location.href = '/';
+		window.location.href = '/';
 		socket.emit('disconnect');
 	}
 
@@ -269,8 +270,9 @@ export default class Drawing extends React.Component {
                 className="send-icon"
                 id="newChatSubmit" onClick = {()=>{
 							  var chatMessage = $('#chatMessage').val();
+                var username = window.username['/#' + socket.id];
 							  socket.emit('chatadded',
-                            {message:chatMessage,room:window.roomName});
+                            {name:username,message:chatMessage,room:window.roomName});
                 $('#chatMessage').val('');
 						  }}>
               <i className="material-icons">

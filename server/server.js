@@ -79,14 +79,14 @@ io.on('connection', function(socket) {
     if(!chats[room]){
       chats[room] = [];
     }
-    console.log(chats[room])
+    // console.log(chats[room])
     room = data['room'],name = data.name, message = data.message;
     chats[room].push([name,message]);
     io.to(room).emit('updatechats', {chats:chats});
   })
 
   socket.on('snapped',function(data){
-    console.log('Received new image');
+    // console.log('Received new image');
     io.sockets.emit('someoneSnapped',{image:data.image});
   })
 
@@ -98,7 +98,7 @@ io.on('connection', function(socket) {
   socket.on('pause',function(data){
    // console.log('Emitted pause')
    paused[data.room] = true;
-   console.log(paused);
+   // console.log(paused);
     io.sockets.emit('pauseAll',{});
   })
 
@@ -114,13 +114,13 @@ io.on('connection', function(socket) {
 
   socket.on('createRoom', function (roomname, username) {
 
-    rooms[formatedRoomName] = '';
+    var formatedRoomName = roomname.split(' ').join('');
+    // rooms[formatedRoomName] = '';
     chats[formatedRoomName] = [];
     videotimes[formatedRoomName] = 0;
-    console.log('CHATS',chats)
+    // console.log('CHATS',chats)
 
 
-    var formatedRoomName = roomname.split(' ').join('');
     rooms[formatedRoomName] = {};
     rooms[formatedRoomName]['canvas'] = [];
     rooms[formatedRoomName]['users'] = {};
@@ -209,6 +209,7 @@ io.on('connection', function(socket) {
       for (room in rooms) {
         roomsArr.push(room);
       }
+
       io.emit('allRooms', roomsArr);
       // console.log('rooms after deleting: ', rooms);
     } else {
@@ -227,9 +228,9 @@ io.on('connection', function(socket) {
     socket.emit('allRooms', roomsArr);
   });
 
-  socket.on('clear', function(room) {
-    rooms[room] = '';
-  });
+  // socket.on('clear', function(room) {
+  //   rooms[room] = '';
+  // });
 
   socket.on('undoTriggered', function() {
     socket.emit('undo');

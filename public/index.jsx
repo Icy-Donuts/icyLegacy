@@ -5,7 +5,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import { Router, Route, hashHistory } from 'react-router'
-import Name from './name.jsx'
+// import Name from './name.jsx'
 import CreateRoom from './views/createRoom.jsx'
 import Drawing from './views/drawing.jsx'
 
