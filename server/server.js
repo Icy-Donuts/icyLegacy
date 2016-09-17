@@ -78,7 +78,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('removePath', function(pathArr, leftValue, room) {
-    var allPaths = JSON.parse(rooms[room]);
+    var allPaths = JSON.parse(rooms[room].canvas);
     // console.log(pathArr);
     var objects = [];
     allPaths.objects.map(function(item) {
@@ -87,7 +87,7 @@ io.on('connection', function(socket) {
       }
     });
     allPaths.objects = objects;
-    rooms[room] = JSON.stringify(allPaths);
+    rooms[room].canvas = JSON.stringify(allPaths);
     // console.log(rooms[room]);
     io.to(room).emit('updateCanvas', allPaths, leftValue);
   });
