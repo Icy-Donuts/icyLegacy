@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 public/node_modules/
+public/assets/uploads
+public/assets/videos
 .npm
 .node_repl_history
 logs

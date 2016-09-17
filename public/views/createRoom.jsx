@@ -50,7 +50,6 @@ export default class CreateRoom extends React.Component {
       },2000);
     })
 	}
-
 	startSession(title, username) {
 		socket.emit('createRoom', title, username);
 		// document.getElementById('roomTitle').value = '';
