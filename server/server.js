@@ -75,7 +75,6 @@ io.on('connection', function(socket) {
 
 
   socket.on('chatadded',function(data){
-    console.log(data);
     var room = data['room'];
     if(!chats[room]){
       chats[room] = [];
@@ -83,9 +82,7 @@ io.on('connection', function(socket) {
     console.log(chats[room])
     room = data['room'],name = data.name, message = data.message;
     chats[room].push([name,message]);
-    console.log(chats[room])
-    // console.log(chats);
-    // console.log(chats[room]);
+    io.to(room).emit('updatechats', {chats:chats});
   })
 
   socket.on('snapped',function(data){
