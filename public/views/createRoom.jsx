@@ -142,17 +142,14 @@ export default class CreateRoom extends React.Component {
             name="roomtitle"
             id="hostTitle"
             placeholder="Title here..." />
-          <div className="duo-button-container">
-          <label
-            className="form-label-icon"
-            htmlFor="file">
-            <i className="material-icons">file_upload</i>
-            upload file
-          </label>
           <input
             hidden
             id="file"
             type="file"
+            onChange={() => {
+              $('#filelabel').addClass('hasFile');
+              $('#filelabel').text('X remove file');
+            }}
             //onChange={()=> {
               //const files = document.getElementById('file').files;
               //const file = files[0];
@@ -162,13 +159,22 @@ export default class CreateRoom extends React.Component {
               //this.getSignedRequest(file);
             //}};
             name="video" />
+          <label
+            id="filelabel"
+            className='form-label-icon'
+            htmlFor="file">
+            <i className="material-icons">file_upload</i>
+            upload file
+          </label>
+
+              <div className="button-flex-wrapper">
               <button
-                type= "submit"
-                id="submitted"
-                className="button-cta">
-                Create room
-              </button>
-            </div>
+                  type= "submit"
+                  id="submitted"
+                  className="button-cta">
+                  Create room
+                </button>
+              </div>
           </form>
           <button
             id="createPageButton"

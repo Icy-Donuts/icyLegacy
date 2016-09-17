@@ -210,9 +210,9 @@ export default class Drawing extends React.Component {
 			var chatholder = $('#chats')
 			chatholder.empty();
 			if(window.roomName in data.chats){
-				data.chats[window.roomName].forEach(function(chats){
-					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chats[1] + "</span></li>");
-					chatholder.append(chat);
+				data.chats[window.roomName].forEach(function(chat){
+					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
+					chatholder.prepend(chat);
 				}.bind(this))
 			}
 		}.bind(this))
@@ -299,15 +299,17 @@ export default class Drawing extends React.Component {
 	    var dataURL = thecanvas.toDataURL();
 
 	    //create img
-	    var img = document.createElement('img');
-	    img.width = 250;
-	    img.height = 250;
+      var container = document.createElement('div');
+	    container.setAttribute('class', 'thumbnail-photo-sizer');
+      var img = document.createElement('img');
 	    img.setAttribute('src', dataURL);
+      img.setAttribute('class', 'thumbnail-photo');
+      container.appendChild(img)
 
 	    socket.emit('snapped',{image:img});
 
 	    //append img in container div
-	    document.getElementById('thumbnailContainer').appendChild(img);
+	    document.getElementById('thumbnailContainer').appendChild(container);
 
 	}
 
@@ -353,94 +355,141 @@ export default class Drawing extends React.Component {
 	render() {
 		console.log(this.state.userColor);
 		return (
-			<div className= "drawingWrapper" >
-	    <div id="chatsholder">
-						<ul id="chats"></ul>
-            <div className="chat-input-container">
-						  <textarea id="chatMessage" className="chat-input" placeholder = "Enter your message" ></textarea>
-              <div className="input-button-container">
-						  <button
+      <div className= "drawingWrapper">
+	      <div id="chatsholder">
+          <div className="chat-input-container">
+			  	  <textarea id="chatMessage" className="chat-input" placeholder = "Enter your message" ></textarea>
+            <div className="input-button-container">
+			  	    <button
                 className="send-icon"
                 id="newChatSubmit" onClick = {()=>{
-							  var chatMessage = $('#chatMessage').val();
+			  				var chatMessage = $('#chatMessage').val();
                 var username = window.username['/#' + socket.id];
-							  socket.emit('chatadded',
-                            {name:username,message:chatMessage,room:window.roomName});
-                $('#chatMessage').val('');
-						  }}>
-              <i className="material-icons">
-                send
-              </i>
-            </button>
+			  				socket.emit('chatadded',
+                  {name:username,message:chatMessage,room:window.roomName});
+                  $('#chatMessage').val('');}}>
+                <i className="material-icons">
+                  send
+                </i>
+              </button>
             </div>
-            </div>
-			</div>
+          </div>
+			    <ul id="chats"></ul>
+			  </div>
 
-      <div className="video-container">
-				<div className="canvas-video-container">
-					<video id ="streamingvideo"></video>
-					<video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
-					<canvas id="canvas" width="750" height="700" ></canvas>
-					<canvas id="streamedto" width="750" height="700" ></canvas>
-					<canvas id="fakecanvas" width="750" height="700" ></canvas>
-				</div>
-        <div className="video-controls-container">
-          <button
-            className="video-control"
-            onClick = {function(){
-              var vid = document.getElementById('video');
-              vid.pause();
-              socket.emit('pause',{room:window.roomName})}}>
+        <div className="video-container">
+			    <button
+            className="exit-icon"
+            onClick={() => {
+              this.endSession();
+            }}>
+            <i className="material-icons">
+              exit_to_app
+            </i>
+            <span>
+              exit
+            </span>
+          </button>
+          <div className="main-video">
+			  	  <div className="canvas-video-container">
+              <video id ="streamingvideo"></video>
+					    <video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
+					    <canvas id="canvas" width="750" height="700" ></canvas>
+					    <canvas id="streamedto" width="750" height="700" ></canvas>
+					    <canvas id="fakecanvas" width="750" height="700" ></canvas>
+			  	  </div>
+            <div className="actions">
+              <button
+                className="action-control"
+                onClick={() => {this.undo()}}>
+                  <i className="material-icons">undo</i>
+                  <span className="actions-span">undo</span>
+              </button>
+              <button
+                className="action-control"
+                onClick = {this.save}>
+                  <i className="material-icons">save</i>
+                  <span className="actions-span">save</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="video-controls-container">
+            <button
+              className="video-control"
+              onClick = {function(){
+                var vid = document.getElementById('video');
+                vid.pause();
+                socket.emit('pause',{room:window.roomName})}}>
+//=======
+			//</div>
+
+      //<div className="video-container">
+				//<div className="canvas-video-container">
+					//<video id ="streamingvideo"></video>
+					//<video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
+					//<canvas id="canvas" width="750" height="700" ></canvas>
+					//<canvas id="streamedto" width="750" height="700" ></canvas>
+					//<canvas id="fakecanvas" width="750" height="700" ></canvas>
+				//</div>
+        //<div className="video-controls-container">
+          //<button
+            //className="video-control"
+            //onClick = {function(){
+              //var vid = document.getElementById('video');
+              //vid.pause();
+              //socket.emit('pause',{room:window.roomName})}}>
+//>>>>>>> 8d8a2de44bba4123796c916baae625a5b3d0fb32
               <i className="material-icons">
                 pause
               </i>
             </button>
-          <button
-            className="video-control play"
-            onClick = {function(){
-              var vid = document.getElementById('video');
-              vid.play();
-              socket.emit('play')}}>
+            <button
+              className="video-control play"
+              onClick = {function(){
+                var vid = document.getElementById('video');
+                vid.play();
+                socket.emit('play')}}>
               <i className="material-icons">
                 play_arrow
               </i>
-          </button>
-          <button
-            className="video-control"
-            onClick = {function(){
-              document.getElementById("video").playbackRate = 0.5;
-              socket.emit('half')}}>
-              <i className="material-icons">
-                slow_motion_video
-              </i>
             </button>
-        </div>
-        <div className="actions">
-          <button
-            className="action-control"
-            onClick={() => {this.undo()}}>undo</button>
-          <button
-            className="action-control"
-            onClick = {this.save}> Save </button>
-          <button
-            className="action-control"
-            onClick = {this.writeOnCanvas}>Note</button>
+            <button
+              className="video-control"
+              onClick = {function(){
+                document.getElementById("video").playbackRate = 0.5;
+                socket.emit('half')}}>
+                <i className="material-icons">
+                  slow_motion_video
+                </i>
+              </button>
+          </div>
 
+          <div className="bottom-content">
+            <div className="users">
+              <h3>Users</h3>
+              <h5>Currently in this chat</h5>
+              <ul>
+		            {this.state.username.map(function(user, index) {
+                  return(
+                    <li key={index}
+                      className="user-list-entry"
+                      onClick={() => {
+                        this.filterUsers(user)}
+                      }>
+                      <span className="list-user-name">{user}</span>
+                      <span className="list-user-span">filter drawings</span>
+                    </li>
+                  )
+                }.bind(this))}
+		          </ul>
+            </div>
+            <div className="thumbnails" id="thumbnailContainer">
+              <h3>Snapshots</h3>
+              <h5>From your conversation</h5>
+            </div>
+          </div>
         </div>
-
-			  <div id="thumbnailContainer"></div>
-				<button onClick={() => {this.endSession();}}>End session</button>
-				<div></div>
-				<ul>
-					{this.state.username.map(function(user, index) {
-        return(
-          <li key={index} onClick={() => {this.filterUsers(user)}}>{user}</li>
-        )
-      }.bind(this))}
-				</ul>
-			</div>
       </div>
-
-			)
-	}
+  )}
 }
