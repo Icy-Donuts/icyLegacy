@@ -62,6 +62,11 @@ io.on('connection', function(socket) {
     // console.log(chats[room]);
   })
 
+  socket.on('snapped',function(data){
+    console.log('Received new image');
+    io.sockets.emit('someoneSnapped',{image:data.image});
+  })
+
   socket.on('updateTime',function(data){
     videotimes[data.room] = data.time;
     //console.log(videotimes);

@@ -134,6 +134,13 @@ export default class Drawing extends React.Component {
 			})
 		}
 
+		socket.on('someoneSnapped',function(data){
+			console.log('Someone has a question');
+			console.log(data.image);	
+			//console.log($('#snappedoverlay'));
+			//$('#snappedoverlay').append($(data.image));
+			//document.getElementById('snappedoverlay').appendChild(data.image);
+		});
 
 		socket.on('pauseAll',function(data){
 			console.log('HEARD PAUSE');
@@ -192,6 +199,8 @@ export default class Drawing extends React.Component {
 	    img.width = 250;
 	    img.height = 250;
 	    img.setAttribute('src', dataURL);
+
+	    socket.emit('snapped',{image:img});
 
 	    //append img in container div
 	    document.getElementById('thumbnailContainer').appendChild(img);
@@ -252,6 +261,7 @@ export default class Drawing extends React.Component {
         <button onClick = {this.writeOnCanvas}>Note</button>
 				<div>
 					<div id="vidcanvasparent">
+					<div id='snappedoverlay'></div>
 					<video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
 					<canvas id="canvas" width="750" height="700" ></canvas>
 					</div>
