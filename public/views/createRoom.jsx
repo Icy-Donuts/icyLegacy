@@ -166,6 +166,9 @@ export default class CreateRoom extends React.Component {
               </button>
             </div>
           </form>
+          <button>
+               Stream
+          </button>
           <button
             hidden
             id="createPageButton"

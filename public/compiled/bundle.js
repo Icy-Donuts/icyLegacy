@@ -54,29 +54,24 @@
 
 	var _reactRouter = __webpack_require__(172);
 
-	var _name = __webpack_require__(235);
-
-	var _name2 = _interopRequireDefault(_name);
-
-	var _createRoom = __webpack_require__(236);
+	var _createRoom = __webpack_require__(235);
 
 	var _createRoom2 = _interopRequireDefault(_createRoom);
 
-	var _drawing = __webpack_require__(237);
+	var _drawing = __webpack_require__(236);
 
 	var _drawing2 = _interopRequireDefault(_drawing);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	//BIG NOTE:  We only used react router to setup routes.  We move from view to view using window.location.href
-
-
+	// import Name from './name.jsx'
 	(0, _reactDom.render)(_react2.default.createElement(
 	  _reactRouter.Router,
 	  { history: _reactRouter.hashHistory },
 	  _react2.default.createElement(_reactRouter.Route, { path: '/', component: _createRoom2.default }),
 	  _react2.default.createElement(_reactRouter.Route, { path: '/drawing', component: _drawing2.default })
 	), document.getElementById('app'));
+	//BIG NOTE:  We only used react router to setup routes.  We move from view to view using window.location.href
 
 /***/ },
 /* 1 */
@@ -27108,76 +27103,6 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	//the starting view shown when you load the game
-
-	var Name = function (_React$Component) {
-		_inherits(Name, _React$Component);
-
-		function Name(props) {
-			_classCallCheck(this, Name);
-
-			return _possibleConstructorReturn(this, (Name.__proto__ || Object.getPrototypeOf(Name)).call(this, props));
-		}
-
-		_createClass(Name, [{
-			key: 'sendName',
-			value: function sendName(player) {
-				socket.emit('name', player);
-			}
-		}, {
-			key: 'componentWillMount',
-			value: function componentWillMount() {
-				socket.on('readyView', function () {
-					window.location.href = '#/ready';
-				});
-			}
-		}, {
-			key: 'render',
-			value: function render() {
-				return _react2.default.createElement(
-					'div',
-					{ className: 'user-register z-depth-1 valign' },
-					_react2.default.createElement('input', { type: 'text', id: 'player', placeholder: 'stumpy the kitty' }),
-					_react2.default.createElement(
-						'button',
-						{ className: 'btn waves-effect waves-light', value: 'Submit', onClick: function () {
-								this.sendName(document.getElementById('player').value);
-							}.bind(this) },
-						'submit'
-					)
-				);
-			}
-		}]);
-
-		return Name;
-	}(_react2.default.Component);
-
-	exports.default = Name;
-
-/***/ },
-/* 236 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 
@@ -27420,6 +27345,11 @@
 	                )
 	              )
 	            ),
+	            _react2.default.createElement(
+	              'button',
+	              null,
+	              'Stream'
+	            ),
 	            _react2.default.createElement('button', {
 	              hidden: true,
 	              id: 'createPageButton',
@@ -27440,7 +27370,7 @@
 	exports.default = CreateRoom;
 
 /***/ },
-/* 237 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27455,7 +27385,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _uuid = __webpack_require__(238);
+	var _uuid = __webpack_require__(237);
 
 	var _uuid2 = _interopRequireDefault(_uuid);
 
@@ -27511,6 +27441,7 @@
 					}
 					return result;
 				};
+
 				var userColor = colorString();
 				this.state.userColor = { color: userColor };
 				var users = this.getUsers();
@@ -27558,7 +27489,7 @@
 				socket.on('updateCanvas', function (svg, leftVal) {
 					if (leftVal) {
 						var x = svg;
-						self.state.room.canvas = svg;
+						this.state.ownCanvas.loadFromJSON(JSON.stringify(svg), this.state.ownCanvas.renderAll.bind(this.state.ownCanvas));
 					} else {
 						fabric.util.enlivenObjects([svg], function (objects) {
 							objects.forEach(function (o) {
@@ -27595,7 +27526,7 @@
 					//console.log(data.chats[window.roomName]);
 					if (window.roomName in data.chats) {
 						data.chats[window.roomName].forEach(function (chat) {
-							var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + this.state.username + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
+							var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
 							chatholder.append(chat);
 						}.bind(this));
 					}
@@ -27650,12 +27581,12 @@
 					vid.playbackRate = 0.5;
 				});
 			}
-		}, {
-			key: 'clear',
-			value: function clear() {
-				self.state.canvas.clear();
-				socket.emit('clear');
-			}
+
+			// clear() {
+			//   self.state.canvas.clear();
+			//   socket.emit('clear');
+			// }
+
 		}, {
 			key: 'undo',
 			value: function undo() {
@@ -27711,7 +27642,7 @@
 				var host = this.state.host;
 				var username = this.state.username;
 				socket.emit('endSession', room, host);
-				// window.location.href = '/';
+				window.location.href = '/';
 				socket.emit('disconnect');
 			}
 		}, {
@@ -27763,7 +27694,8 @@
 										className: 'send-icon',
 										id: 'newChatSubmit', onClick: function onClick() {
 											var chatMessage = $('#chatMessage').val();
-											socket.emit('chatadded', { message: chatMessage, room: window.roomName });
+											var username = window.username['/#' + socket.id];
+											socket.emit('chatadded', { name: username, message: chatMessage, room: window.roomName });
 											$('#chatMessage').val('');
 										} },
 									_react2.default.createElement(
@@ -27894,7 +27826,7 @@
 	exports.default = Drawing;
 
 /***/ },
-/* 238 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//     uuid.js
@@ -27905,7 +27837,7 @@
 	// Unique ID creation requires a high quality random # generator.  We feature
 	// detect to determine the best RNG source, normalizing to a function that
 	// returns 128-bits of randomness, since that's what's usually required
-	var _rng = __webpack_require__(239);
+	var _rng = __webpack_require__(238);
 
 	// Maps for number <-> hex string conversion
 	var _byteToHex = [];
@@ -28083,7 +28015,7 @@
 
 
 /***/ },
-/* 239 */
+/* 238 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
