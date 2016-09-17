@@ -119,6 +119,7 @@ export default class Drawing extends React.Component {
 	//			img.src = url;
 
 	//		}
+	//LOADING FROM FILE logic ends here
 	}
 
 		}
@@ -199,53 +200,54 @@ export default class Drawing extends React.Component {
 		}.bind(this))
 
 
+		if(window.loadedFromFile){
+			if(this.state.host){
+				document.getElementById('video').addEventListener('loadedmetadata', function() {this.currentTime = 2;this.play()}, false);
 
-		if(this.state.host){
-			document.getElementById('video').addEventListener('loadedmetadata', function() {this.currentTime = 2;this.play()}, false);
+				setInterval(function(){
+					var video = document.getElementById('video');
+					var ct = video.currentTime;
+					//console.log(ct);
+					socket.emit('updateTime',{room:window.roomName,time:ct})
+				},1000)
+			} else {
+				socket.on('sendStartTime',function(data){
+					console.log('started');
+					var vid = document.getElementById('video');
+					vid.currentTime = data.time;
+					vid.play();
+					console.log(data.pausedbool);
+					if(data.pausedbool){
+						vid.pause();
+					}
+				})
+			}
 
-			setInterval(function(){
-				var video = document.getElementById('video');
-				var ct = video.currentTime;
-				//console.log(ct);
-				socket.emit('updateTime',{room:window.roomName,time:ct})
-			},1000)
-		} else {
-			socket.on('sendStartTime',function(data){
-				console.log('started');
+			socket.on('someoneSnapped',function(data){
+				console.log('Someone has a question');
+				console.log(data.image);
+				//console.log($('#snappedoverlay'));
+				//$('#snappedoverlay').append($(data.image));
+				//document.getElementById('snappedoverlay').appendChild(data.image);
+			});
+
+			socket.on('pauseAll',function(data){
+				console.log('HEARD PAUSE');
 				var vid = document.getElementById('video');
-				vid.currentTime = data.time;
+				vid.pause();
+			})
+
+			socket.on('playAll',function(data){
+				console.log('HEARD PLAY');
+				var vid = document.getElementById('video');
 				vid.play();
-				console.log(data.pausedbool);
-				if(data.pausedbool){
-					vid.pause();
-				}
+			})
+
+			socket.on('halveAll',function(){
+				var vid = document.getElementById('video');
+				vid.playbackRate = 0.5;
 			})
 		}
-
-		socket.on('someoneSnapped',function(data){
-			console.log('Someone has a question');
-			console.log(data.image);
-			//console.log($('#snappedoverlay'));
-			//$('#snappedoverlay').append($(data.image));
-			//document.getElementById('snappedoverlay').appendChild(data.image);
-		});
-
-		socket.on('pauseAll',function(data){
-			console.log('HEARD PAUSE');
-			var vid = document.getElementById('video');
-			vid.pause();
-		})
-
-		socket.on('playAll',function(data){
-			console.log('HEARD PLAY');
-			var vid = document.getElementById('video');
-			vid.play();
-		})
-
-		socket.on('halveAll',function(){
-			var vid = document.getElementById('video');
-			vid.playbackRate = 0.5;
-		})
 	}
 
   // clear() {
@@ -359,7 +361,7 @@ export default class Drawing extends React.Component {
       <div className="video-container">
 				<div className="canvas-video-container">
 					<video id ="streamingvideo"></video>
-					<video id = "video" src = {"/assets/uploads/" + 'aaa'} width ="750" height="750"></video>
+					<video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
 					<canvas id="canvas" width="750" height="700" ></canvas>
 					<canvas id="fakecanvas" width="750" height="700" ></canvas>
 				</div>
