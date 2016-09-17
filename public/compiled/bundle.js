@@ -27519,7 +27519,28 @@
 						//		}
 						//LOADING FROM FILE logic ends here
 					} else {
-						alert('YOU ARE NOT THE STREAMER');
+						var ctx;
+
+						(function () {
+							var drawto = function drawto(url, ctx) {
+								//console.log(url);
+								var img = new Image();
+
+								img.setAttribute('crossOrigin', 'anonymous');
+								img.onload = function () {
+									ctx.drawImage(img, 0, 0); // Or at whatever offset you like
+								};
+								img.src = url;
+							};
+
+							alert('YOU ARE NOT THE STREAMER');
+
+							ctx = document.getElementById('streamedto').getContext('2d');
+
+							socket.on('broadcast', function (data) {
+								drawto(data.data, ctx);
+							});
+						})();
 					}
 				}
 				//if (!window.roomName) {
@@ -27783,6 +27804,7 @@
 							_react2.default.createElement('video', { id: 'streamingvideo' }),
 							_react2.default.createElement('video', { id: 'video', src: "/assets/uploads/" + window.roomName, width: '750', height: '750' }),
 							_react2.default.createElement('canvas', { id: 'canvas', width: '750', height: '700' }),
+							_react2.default.createElement('canvas', { id: 'streamedto', width: '750', height: '700' }),
 							_react2.default.createElement('canvas', { id: 'fakecanvas', width: '750', height: '700' })
 						),
 						_react2.default.createElement(

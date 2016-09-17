@@ -74,7 +74,7 @@ var paused = {};
 io.on('connection', function(socket) {
 
   socket.on('picdata',function(data){
-    console.log(data);
+   // console.log(data);
     //console.log(data)
     io.sockets.emit('broadcast',data);
   })
