@@ -256,6 +256,7 @@ button {
 #video {
   margin-top: -128px;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  /*position: absolute;*/
 }
 .canvas-container {
   top: -750px;
@@ -377,4 +378,8 @@ h5 {
 }
 
 
-
+#streamedto{
+  position:absolute;
+  top:32px;
+  z-index:-6;
+}

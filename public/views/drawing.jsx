@@ -51,6 +51,98 @@ export default class Drawing extends React.Component {
 	}
 
 	componentDidMount() {
+		if (window.loadedFromFile) {
+			$('#streamingvideo').remove();
+		}
+		if(!window.loadedFromFile){
+			if(window.streamer){
+				$('#video').css({position: 'absolute'});
+				navigator.getUserMedia = (navigator.getUserMedia || 
+	                          navigator.webkitGetUserMedia || 
+	                          navigator.mozGetUserMedia || 
+	                          navigator.msGetUserMedia);
+
+			   if (navigator.getUserMedia) {
+			   	console.log('here');
+			      navigator.getUserMedia(
+			         {
+			            video:true,
+			            audio:false
+			         },        
+			         function(stream) {  
+			          var v= document.getElementById('streamingvideo');	
+			          var url = window.URL || window.webkitURL;
+	                  v.src = url ? url.createObjectURL(stream) : stream;
+	                  v.play();
+
+			          },
+			         function(error) { /* do something */ }
+			      );
+			   }
+			   // else {
+			   //    alert('Sorry, the browser you are using doesn\'t support getUserMedia');
+			   //    return;
+			   //  }
+			   	var draw = function() {
+			var video = document.querySelector('video');
+			var canvas = document.getElementById('fakecanvas')
+			//console.log('CANVAS',canvas)
+			canvas.width = 750;
+			canvas.height = 460;
+			canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+			//var ctx = document.getElementById('canvas2').getContext('2d')
+	   		var dataurl = canvas.toDataURL()
+	   		//dataurl = JSON.stringify(dataurl).slice(Math.floor(dataurl.length/3))
+	   		// $.ajax({
+	   		// 	method:'POST',
+	   		// 	url:'http://localhost:3000/posted',
+	   		// 	data: {url:dataurl}
+	   		// })
+	   		socket.emit('picdata',{data:dataurl})
+	  // 		drawto(dataurl,ctx)
+	   		
+	   		   	}
+
+	   	
+	   		setInterval(draw,300);
+	   		//var ctx = document.getElementById('canvas3').getContext('2d')
+	   //		socket.on('broadcast',function(data){drawto(data.data,ctx)})
+
+		//	function drawto(url,ctx) {
+		//	    var img = new Image();
+	//
+	//		    img.setAttribute('crossOrigin', 'anonymous');
+	//		    img.onload = function(){
+	//		  		ctx.drawImage(img,0,0); // Or at whatever offset you like
+	//			};
+	//			img.src = url;
+
+	//		}
+	//LOADING FROM FILE logic ends here
+
+	} else {
+		alert('YOU ARE NOT THE STREAMER');
+
+			$('#streamingvideo').remove();
+   		var ctx = document.getElementById('streamedto').getContext('2d')
+   		socket.on('broadcast',function(data){drawto(data.data,ctx)})
+
+		function drawto(url,ctx) {
+			//console.log(url);
+		    var img = new Image();
+
+		    img.setAttribute('crossOrigin', 'anonymous');
+		    img.onload = function(){
+		  		ctx.drawImage(img,0,0); // Or at whatever offset you like
+			};
+			img.src = url;
+
+		}
+
+
+	}
+
+		}
 		//if (!window.roomName) {
 			//window.location.href = '/';
 		//}
@@ -117,8 +209,6 @@ export default class Drawing extends React.Component {
 			console.log('Updated chats');
 			var chatholder = $('#chats')
 			chatholder.empty();
-			console.log(data);
-			//console.log(data.chats[window.roomName]);
 			if(window.roomName in data.chats){
 				data.chats[window.roomName].forEach(function(chat){
 					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
@@ -127,52 +217,55 @@ export default class Drawing extends React.Component {
 			}
 		}.bind(this))
 
-		if(this.state.host){
-			document.getElementById('video').addEventListener('loadedmetadata', function() {this.currentTime = 2;this.play()}, false);
 
-			setInterval(function(){
-				var video = document.getElementById('video');
-				var ct = video.currentTime;
-				//console.log(ct);
-				socket.emit('updateTime',{room:window.roomName,time:ct})
-			},1000)
-		} else {
-			socket.on('sendStartTime',function(data){
-				console.log('started');
+		if(window.loadedFromFile){
+			if(this.state.host){
+				document.getElementById('video').addEventListener('loadedmetadata', function() {this.currentTime = 2;this.play()}, false);
+
+				setInterval(function(){
+					var video = document.getElementById('video');
+					var ct = video.currentTime;
+					//console.log(ct);
+					socket.emit('updateTime',{room:window.roomName,time:ct})
+				},1000)
+			} else {
+				socket.on('sendStartTime',function(data){
+					console.log('started');
+					var vid = document.getElementById('video');
+					vid.currentTime = data.time;
+					vid.play();
+					console.log(data.pausedbool);
+					if(data.pausedbool){
+						vid.pause();
+					}
+				})
+			}
+
+			socket.on('someoneSnapped',function(data){
+				console.log('Someone has a question');
+				console.log(data.image);
+				//console.log($('#snappedoverlay'));
+				//$('#snappedoverlay').append($(data.image));
+				//document.getElementById('snappedoverlay').appendChild(data.image);
+			});
+
+			socket.on('pauseAll',function(data){
+				console.log('HEARD PAUSE');
 				var vid = document.getElementById('video');
-				vid.currentTime = data.time;
+				vid.pause();
+			})
+
+			socket.on('playAll',function(data){
+				console.log('HEARD PLAY');
+				var vid = document.getElementById('video');
 				vid.play();
-				console.log(data.pausedbool);
-				if(data.pausedbool){
-					vid.pause();
-				}
+			})
+
+			socket.on('halveAll',function(){
+				var vid = document.getElementById('video');
+				vid.playbackRate = 0.5;
 			})
 		}
-
-		socket.on('someoneSnapped',function(data){
-			console.log('Someone has a question');
-			console.log(data.image);
-			//console.log($('#snappedoverlay'));
-			//$('#snappedoverlay').append($(data.image));
-			//document.getElementById('snappedoverlay').appendChild(data.image);
-		});
-
-		socket.on('pauseAll',function(data){
-			console.log('HEARD PAUSE');
-			var vid = document.getElementById('video');
-			vid.pause();
-		})
-
-		socket.on('playAll',function(data){
-			console.log('HEARD PLAY');
-			var vid = document.getElementById('video');
-			vid.play();
-		})
-
-		socket.on('halveAll',function(){
-			var vid = document.getElementById('video');
-			vid.playbackRate = 0.5;
-		})
 	}
 
   // clear() {
@@ -299,8 +392,11 @@ export default class Drawing extends React.Component {
           </button>
           <div className="main-video">
 			  	  <div className="canvas-video-container">
-			  		  <video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
-			  		  <canvas id="canvas" width="750" height="700" ></canvas>
+              <video id ="streamingvideo"></video>
+					    <video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
+					    <canvas id="canvas" width="750" height="700" ></canvas>
+					    <canvas id="streamedto" width="750" height="700" ></canvas>
+					    <canvas id="fakecanvas" width="750" height="700" ></canvas>
 			  	  </div>
             <div className="actions">
               <button
@@ -325,6 +421,25 @@ export default class Drawing extends React.Component {
                 var vid = document.getElementById('video');
                 vid.pause();
                 socket.emit('pause',{room:window.roomName})}}>
+//=======
+			//</div>
+
+      //<div className="video-container">
+				//<div className="canvas-video-container">
+					//<video id ="streamingvideo"></video>
+					//<video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
+					//<canvas id="canvas" width="750" height="700" ></canvas>
+					//<canvas id="streamedto" width="750" height="700" ></canvas>
+					//<canvas id="fakecanvas" width="750" height="700" ></canvas>
+				//</div>
+        //<div className="video-controls-container">
+          //<button
+            //className="video-control"
+            //onClick = {function(){
+              //var vid = document.getElementById('video');
+              //vid.pause();
+              //socket.emit('pause',{room:window.roomName})}}>
+//>>>>>>> 8d8a2de44bba4123796c916baae625a5b3d0fb32
               <i className="material-icons">
                 pause
               </i>

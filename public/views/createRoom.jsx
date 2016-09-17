@@ -11,12 +11,15 @@ export default class CreateRoom extends React.Component {
 	}
 
 	componentWillMount() {
+    window.loadedFromFile = false;
 		var idString = '/#' + socket.id;
-		socket.on('enterRoom', function(roomName, roomObj) {
+		socket.on('enterRoom', function(roomName, roomObj,streamer,fromfile) {
 			window.roomName = roomName;
   		window.canvas = roomObj.canvas;
   		window.username = roomObj.users;
+      window.streamer = streamer;
 			window.host = true;
+      window.loadedFromFile = fromfile;
 			window.location.href = '#/drawing';
   		socket.removeListener('allRooms');
 		});
@@ -45,13 +48,14 @@ export default class CreateRoom extends React.Component {
     });
     $('#submitted').on('click',function(){
       // console.log('Submitted');
+      window.loadedFromFile = true;
       setInterval(function(){
         $('#createPageButton').click()
       },2000);
     })
 	}
-	startSession(title, username) {
-		socket.emit('createRoom', title, username);
+	startSession(title, username,streamer,file) {
+		socket.emit('createRoom', title, username,streamer,file);
 		// document.getElementById('roomTitle').value = '';
 	}
 
@@ -173,13 +177,12 @@ export default class CreateRoom extends React.Component {
               </div>
           </form>
           <button
-            hidden
             id="createPageButton"
             onClick={() => {
               var title = document.getElementById('hostTitle').value;
               var username = document.getElementById('username').value;
-              this.startSession(title, username);
-            }}>
+              this.startSession(title, username,true,window.loadedFromFile);
+            }}> Stream
           </button>
 		    </div>
       </div>
