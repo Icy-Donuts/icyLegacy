@@ -27371,20 +27371,43 @@
 				history: {
 					objects: []
 				},
-				host: false
+				host: false,
+				username: '',
+				userColor: {}
 			};
 			return _this;
 		}
 
 		_createClass(Drawing, [{
+			key: 'getUsers',
+			value: function getUsers() {
+				var users = [];
+				for (var user in window.username) {
+					users.push(window.username[user]);
+				}
+				return users;
+			}
+		}, {
 			key: 'componentWillMount',
 			value: function componentWillMount() {
+				var colorString = function colorString() {
+					var rootLetter = '0123456789ABCDEF';
+					var result = '#';
+					for (var i = 0; i < 6; i++) {
+						result += rootLetter[Math.floor(Math.random() * 10) % 16];
+					}
+					return result;
+				};
+				var userColor = colorString();
+				this.state.userColor = { color: userColor };
+				var users = this.getUsers();
 				this.setState({
 					room: {
 						name: window.roomName,
 						canvas: window.canvas
 					},
-					host: window.host
+					host: window.host,
+					username: users
 				});
 			}
 		}, {
@@ -27393,23 +27416,36 @@
 				if (!window.roomName) {
 					window.location.href = '/';
 				}
+				var self = this;
 				var canvas = new fabric.Canvas('canvas', {
 					isDrawingMode: true
 				});
 				this.state.ownCanvas = canvas;
-				var self = this;
+
 				self.state.ownCanvas.loadFromJSON(self.state.room.canvas, self.state.ownCanvas.renderAll.bind(self.state.ownCanvas));
 				self.state.ownCanvas.freeDrawingBrush.width = 10;
+				self.state.ownCanvas.freeDrawingBrush.color = self.state.userColor.color;
+
 				self.state.ownCanvas.on('path:created', function (e) {
 					var id = _uuid2.default.v4();
 					self.state.history.objects.push(e.path.toJSON());
 					self.state.room.canvas = e.path.toJSON();
 					socket.emit('pathAdded', e.path.toJSON(), JSON.stringify(self.state.ownCanvas), self.state.room.name);
 				}.bind(this));
+
+				socket.on('updateUser', function (roomObj) {
+					window.username = roomObj.users;
+					var newusers = self.getUsers();
+					self.setState({
+						username: newusers
+					});
+					console.log('current state: ', self.state);
+				});
+
 				socket.on('updateCanvas', function (svg, leftVal) {
 					if (leftVal) {
+						console.log('svg: ', svg.objects);
 						var x = svg;
-						this.state.ownCanvas.loadFromJSON(JSON.stringify(svg), this.state.ownCanvas.renderAll.bind(this.state.ownCanvas));
 					} else {
 						fabric.util.enlivenObjects([svg], function (objects) {
 							objects.forEach(function (o) {
@@ -27447,18 +27483,54 @@
 			value: function endSession() {
 				var room = this.state.room.name;
 				var host = this.state.host;
+				var username = this.state.username;
 				socket.emit('endSession', room, host);
 				// window.location.href = '/';
 				socket.emit('disconnect');
+			}
+		}, {
+			key: 'filterUsers',
+			value: function filterUsers(username) {
+				console.log('current canvas: ', this.state.ownCanvas);
+				var currentCanvas = this.state.ownCanvas;
+				var users = this.getUsers();
+				for (var i = 0; i < currentCanvas._objects.length; i++) {
+					if (currentCanvas._objects[i].id !== undefined) {
+						if (currentCanvas._objects[i].id === username) {
+							currentCanvas._objects[i].visible = !currentCanvas._objects[i].visible;
+						}
+					}
+				}
+				this.setState({
+					room: {
+						name: window.roomName,
+						canvas: currentCanvas
+					},
+					host: window.host,
+					username: users
+				});
+				this.state.ownCanvas.renderAll();
 			}
 		}, {
 			key: 'render',
 			value: function render() {
 				var _this2 = this;
 
+				console.log(this.state.userColor);
 				return _react2.default.createElement(
 					'div',
 					{ className: 'drawingWrapper' },
+					_react2.default.createElement(
+						'div',
+						null,
+						_react2.default.createElement(
+							'h3',
+							null,
+							'Welcome to ',
+							this.state.username[0],
+							'\'s Room!!'
+						)
+					),
 					_react2.default.createElement(
 						'button',
 						{ onClick: function onClick() {
@@ -27485,6 +27557,22 @@
 								_this2.endSession();
 							} },
 						'End session'
+					),
+					_react2.default.createElement('div', null),
+					_react2.default.createElement(
+						'ul',
+						null,
+						this.state.username.map(function (user, index) {
+							var _this3 = this;
+
+							return _react2.default.createElement(
+								'li',
+								{ key: index, onClick: function onClick() {
+										_this3.filterUsers(user);
+									} },
+								user
+							);
+						}.bind(this))
 					)
 				);
 			}
