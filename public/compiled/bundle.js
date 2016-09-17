@@ -27138,13 +27138,15 @@
 	  _createClass(CreateRoom, [{
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
+	      window.loadedFromFile = false;
 	      var idString = '/#' + socket.id;
-	      socket.on('enterRoom', function (roomName, roomObj, streamer) {
+	      socket.on('enterRoom', function (roomName, roomObj, streamer, fromfile) {
 	        window.roomName = roomName;
 	        window.canvas = roomObj.canvas;
 	        window.username = roomObj.users;
 	        window.streamer = streamer;
 	        window.host = true;
+	        window.loadedFromFile = fromfile;
 	        window.location.href = '#/drawing';
 	        socket.removeListener('allRooms');
 	      });
@@ -27173,6 +27175,7 @@
 	      });
 	      $('#submitted').on('click', function () {
 	        // console.log('Submitted');
+	        window.loadedFromFile = true;
 	        setInterval(function () {
 	          $('#createPageButton').click();
 	        }, 2000);
@@ -27180,8 +27183,8 @@
 	    }
 	  }, {
 	    key: 'startSession',
-	    value: function startSession(title, username, streamer) {
-	      socket.emit('createRoom', title, username, streamer);
+	    value: function startSession(title, username, streamer, file) {
+	      socket.emit('createRoom', title, username, streamer, file);
 	      // document.getElementById('roomTitle').value = '';
 	    }
 	  }, {
@@ -27358,7 +27361,7 @@
 	                onClick: function onClick() {
 	                  var title = document.getElementById('hostTitle').value;
 	                  var username = document.getElementById('username').value;
-	                  _this3.startSession(title, username, true);
+	                  _this3.startSession(title, username, true, window.loadedFromFile);
 	                } },
 	              ' Stream'
 	            )
@@ -27461,6 +27464,7 @@
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
+				console.log('file', window.loadedFromFile);
 				if (window.streamer) {
 
 					navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;

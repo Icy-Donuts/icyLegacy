@@ -51,6 +51,7 @@ export default class Drawing extends React.Component {
 	}
 
 	componentDidMount() {
+		console.log('file',window.loadedFromFile);
 		if(window.streamer){
 
 
@@ -196,6 +197,8 @@ export default class Drawing extends React.Component {
 				}.bind(this))
 			}
 		}.bind(this))
+
+
 
 		if(this.state.host){
 			document.getElementById('video').addEventListener('loadedmetadata', function() {this.currentTime = 2;this.play()}, false);

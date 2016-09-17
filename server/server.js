@@ -112,7 +112,7 @@ io.on('connection', function(socket) {
 
 
 
-  socket.on('createRoom', function (roomname, username,streamer) {
+  socket.on('createRoom', function (roomname, username,streamer,loadedfromfile) {
     console.log('STREAMER',streamer);
     var formatedRoomName = roomname.split(' ').join('');
     // rooms[formatedRoomName] = '';
@@ -126,7 +126,8 @@ io.on('connection', function(socket) {
     rooms[formatedRoomName]['users'] = {};
     rooms[formatedRoomName]['users'][socket.id] = username;
     socket.join(formatedRoomName);
-    socket.emit('enterRoom', formatedRoomName, rooms[formatedRoomName],streamer);
+    console.log('SERVERSIDEFILE',loadedfromfile)
+    socket.emit('enterRoom', formatedRoomName, rooms[formatedRoomName],streamer,loadedfromfile);
     var roomsArr = [];
     for (room in rooms) {
       roomsArr.push(room);
