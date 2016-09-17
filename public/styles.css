@@ -284,9 +284,9 @@ h1.results {
 video{
 position: absolute; 
 width: 750px; 
-height: 700px; 
+height: 400px; 
 left: 140px; 
-top: 140px; 
+top: 250px; 
 -webkit-user-select: none; 
 cursor: crosshair;
 }
