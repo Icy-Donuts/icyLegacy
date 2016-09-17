@@ -4,7 +4,8 @@ var bp = require('body-parser');
 var multer  = require('multer')
 var upload = multer({ dest: 'public/assets/uploads' }).single('video')
 var fs = require('fs');
-
+var aws = require('aws-sdk');
+var S3_BUCKET = process.env.S3_BUCKET;
 app.use(bp.urlencoded({extended:true}));
 app.use(bp.json());
 
@@ -23,23 +24,50 @@ var queried = false;
 var images;
 
 //handles file uploads
-app.post('/file_upload', function (req, res) {
 
-  upload(req, res, function (err) {
-    var dirnamemod = __dirname.replace('/server',"")
-    var path = dirnamemod + "/public/assets/uploads/" + req.file.path.replace('public/assets/uploads/',"");
-    // console.log('PATH',path);
-    fs.rename(path,path.slice(0,path.indexOf('public/assets/uploads/')+22) + req.body.roomtitle.replace(" ",""),function(err){
-      if(err){console.log(err);}
+if (NODE_ENV=production) {
+  app.get('/sign-s3', (req, res) => {
+    var s3 = new aws.S3();
+    var fileName = req.query['file-name'];
+    var fileType = req.query['file-type'];
+    var s3Params = {
+      Bucket: S3_BUCKET,
+      Key = filename,
+        Expires: 60,
+        ContentType: fileType,
+        ACL: 'public-read'
+    };
+
+    s3.getSignedUrl('putObject', s3Params, (err, data) => {
+      if(err) {
+        console.log(err);
+        return res.end();
+      }
+      var returnData = {
+        signedRequest: data,
+        url: 'https://' + S3_BUCKET + '.s3.amazonaws.com/' + filename;
+      };
+      res.write(JSON.stringify(returnData));
+      res.end();
+    });
+  });
+
+  app.post('/file_upload', function (req, res) {
+    upload(req, res, function (err) {
+      var dirnamemod = __dirname.replace('/server',"")
+      var path = dirnamemod + "/public/assets/uploads/" + req.file.path.replace('public/assets/uploads/',"");
+      // console.log('PATH',path);
+      fs.rename(path,path.slice(0,path.indexOf('public/assets/uploads/')+22) + req.body.roomtitle.replace(" ",""),function(err){
+        if(err){console.log(err);}
+      })
+      if (err) {
+        // An error occurred when uploading
+        return
+      }
+      // Everything went fine
     })
-    if (err) {
-      // An error occurred when uploading
-      return
-    }
-
-    // Everything went fine
   })
-})
+}
 
 io.on('connection', function(socket) {
   socket.on('createRoom', function (roomname, username) {
