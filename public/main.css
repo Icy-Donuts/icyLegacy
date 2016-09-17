@@ -9,8 +9,8 @@ b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
 	margin: 0;
@@ -166,3 +166,119 @@ h3 {
   display: flex;
   justify-content: flex-end;
 }
+.drawingWrapper {
+  display: flex;
+  width: 100%;
+  margin-top: 32px;
+  justify-content: space-between;
+}
+#chatsholder {
+  width: 384px;
+  background: #e0e0e0;
+  height: 100vh;
+}
+#app {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+#chats > li:last-child{
+  margin-bottom: 32px;
+}
+.chat-item {
+  height: 32px;
+  width: 352px;
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 8px;
+  background: #ffffff;
+  padding: 16px;
+}
+.chat-username {
+  color: #aaa;
+  margin-right: 16px;
+}
+.chat-input-container {
+  width: 352px;
+  height: 72px;
+  padding: 16px 16px 64px;
+  background: #fff;
+}
+.chat-input {
+  border: none;
+  width: 352px;
+  height: 72px;
+  font-size: 14px;
+  resize: none;
+}
+button {
+  background: none;
+  border: none;
+}
+.send-icon {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  height: 36px;
+  padding: 0 16px;
+  margin: 8px 0;
+  font-size: 14px;
+  border-radius: 3px;
+  color: #ffffff;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  background: #00E676;
+  display: flex;
+  justify-content: center;
+  text-transform: uppercase;
+  align-items: center;
+}
+.input-button-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+.video-container {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-top;
+  justify-content: center;
+}
+.canvas-video-container {
+  margin: 0 auto;
+  position: relative;
+  width: 752px;
+  height: 500px;
+  overflow: hidden;
+}
+#video {
+  margin-top: -128px;
+}
+.canvas-container {
+  top: -750px;
+}
+.video-controls-container {
+  width: 367px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: -124px;
+  z-index: 100;
+}
+.video-control {
+  height: 56px;
+  width: 56px;
+  border-radius: 50%;
+  color: #fff;
+  background: #00E676;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.play {
+  width: 84px;
+  height: 84px;
+  font-size: 20px;
+}
+
+

@@ -41,7 +41,7 @@ export default class Drawing extends React.Component {
 		var users = this.getUsers();
 	 	this.setState({
 	 		room: {
-	 			name: window.roomName, 
+	 			name: window.roomName,
 	 			canvas: window.canvas,
 	 		},
 	 		host: window.host,
@@ -50,9 +50,9 @@ export default class Drawing extends React.Component {
 	}
 
 	componentDidMount() {
-		if (!window.roomName) {
-			window.location.href = '/';
-		}
+		//if (!window.roomName) {
+			//window.location.href = '/';
+		//}
 		var self = this;
 		var canvas = new fabric.Canvas('canvas', {
 			isDrawingMode: true,
@@ -62,7 +62,7 @@ export default class Drawing extends React.Component {
 		self.state.ownCanvas.loadFromJSON(self.state.room.canvas, self.state.ownCanvas.renderAll.bind(self.state.ownCanvas));
 		self.state.ownCanvas.freeDrawingBrush.width = 10;
 		self.state.ownCanvas.freeDrawingBrush.color = self.state.userColor.color;
-		
+
 		self.state.ownCanvas.on('path:created', function(e) {
       var id = uuid.v4();
       self.state.history.objects.push(e.path.toJSON());
@@ -81,8 +81,8 @@ export default class Drawing extends React.Component {
 
 		socket.on('updateCanvas', function(svg, leftVal) {
       if (leftVal) {
-        console.log('svg: ', svg.objects);
         var x = svg;
+        self.state.room.canvas = svg;
       } else {
 			  fabric.util.enlivenObjects([svg], function(objects) {
 				  objects.forEach(function(o){
@@ -98,6 +98,20 @@ export default class Drawing extends React.Component {
 		});
 
 
+		//socket.on('updatechats',function(data){
+			//console.log('Updated chats');
+			//var chatholder = $('#chats')
+			//chatholder.empty();
+			//console.log(data);
+			////console.log(data.chats[window.roomName]);
+			//if(window.roomName in data.chats){
+				//data.chats[window.roomName].forEach(function(chat){
+					//var chat = $('<li>' + chat[0] + ":" + chat[1] + "</li>");
+					//chatholder.append(chat);
+				//})
+			//}
+		//})
+
 		socket.on('updatechats',function(data){
 			console.log('Updated chats');
 			var chatholder = $('#chats')
@@ -106,11 +120,11 @@ export default class Drawing extends React.Component {
 			//console.log(data.chats[window.roomName]);
 			if(window.roomName in data.chats){
 				data.chats[window.roomName].forEach(function(chat){
-					var chat = $('<li>' + chat[0] + ":" + chat[1] + "</li>");
+					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + this.state.username + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
 					chatholder.append(chat);
-				})
+				}.bind(this))
 			}
-		})
+		}.bind(this))
 
 		if(this.state.host){
 			document.getElementById('video').addEventListener('loadedmetadata', function() {this.currentTime = 2;this.play()}, false);
@@ -136,7 +150,7 @@ export default class Drawing extends React.Component {
 
 		socket.on('someoneSnapped',function(data){
 			console.log('Someone has a question');
-			console.log(data.image);	
+			console.log(data.image);
 			//console.log($('#snappedoverlay'));
 			//$('#snappedoverlay').append($(data.image));
 			//document.getElementById('snappedoverlay').appendChild(data.image);
@@ -158,10 +172,6 @@ export default class Drawing extends React.Component {
 			var vid = document.getElementById('video');
 			vid.playbackRate = 0.5;
 		})
-
-
-
-
 	}
 
   clear() {
@@ -237,46 +247,90 @@ export default class Drawing extends React.Component {
 		}
 		this.setState({
 	 		room: {
-	 			name: window.roomName, 
+	 			name: window.roomName,
 	 			canvas: currentCanvas,
 	 		},
 	 		host: window.host,
 	 		username: users,
 	 	});
 	 	this.state.ownCanvas.renderAll();
-		
 	}
 
 	render() {
 		console.log(this.state.userColor);
 		return (
 			<div className= "drawingWrapper" >
-			<div><h3>Welcome to {this.state.username[0]}'s Room!!</h3></div>
-        <button onClick={() => {this.clear()}}>clear</button>
-        <button onClick={() => {this.undo()}}>undo</button>
-        <button onClick = {function(){var vid = document.getElementById('video');vid.play();socket.emit('play')}}> Play </button>
-        <button onClick = {function(){var vid = document.getElementById('video');vid.pause();socket.emit('pause',{room:window.roomName})}}> Pause </button>
-        <button onClick = {function(){ document.getElementById("video").playbackRate = 0.5;socket.emit('half')}}>Half-speed</button>
-        <button onClick = {this.save}> Save </button>
-        <button onClick = {this.writeOnCanvas}>Note</button>
-				<div>
-					<div id="vidcanvasparent">
-					<div id='snappedoverlay'></div>
-					<video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
-					<canvas id="canvas" width="750" height="700" ></canvas>
-					</div>
-					<div id="chatsholder">
+	    <div id="chatsholder">
 						<ul id="chats"></ul>
-						<input id="userNameInput" class="chatinput" placeholder = "Enter your username" ></input>
-						<input id="chatMessage" class="chatinput" placeholder = "Enter your message" ></input>
-						<button id="newChatSubmit" onClick = {()=>{
-							var username = $('#userNameInput').val()
-							var chatMessage = $('#chatMessage').val();
-							socket.emit('chatadded',{name:username,message:chatMessage,room:window.roomName})
-						}}>Submit Chat</button>
-					</div>
-					<div id="thumbnailContainer"></div>
+            <div className="chat-input-container">
+						  <textarea id="chatMessage" className="chat-input" placeholder = "Enter your message" ></textarea>
+              <div className="input-button-container">
+						  <button
+                className="send-icon"
+                id="newChatSubmit" onClick = {()=>{
+							  var chatMessage = $('#chatMessage').val();
+							  socket.emit('chatadded',
+                            {message:chatMessage,room:window.roomName});
+                $('#chatMessage').val('');
+						  }}>
+              <i className="material-icons">
+                send
+              </i>
+            </button>
+            </div>
+            </div>
+			</div>
+
+      <div className="video-container">
+				<div className="canvas-video-container">
+					<video id = "video" src = {"/assets/uploads/" + 'aaa'} width ="750" height="750"></video>
+					<canvas id="canvas" width="750" height="700" ></canvas>
 				</div>
+        <div className="video-controls-container">
+          <button
+            className="video-control"
+            onClick = {function(){
+              var vid = document.getElementById('video');
+              vid.pause();
+              socket.emit('pause',{room:window.roomName})}}>
+              <i className="material-icons">
+                pause
+              </i>
+            </button>
+          <button
+            className="video-control play"
+            onClick = {function(){
+              var vid = document.getElementById('video');
+              vid.play();
+              socket.emit('play')}}>
+              <i className="material-icons">
+                play_arrow
+              </i>
+          </button>
+          <button
+            className="video-control"
+            onClick = {function(){
+              document.getElementById("video").playbackRate = 0.5;
+              socket.emit('half')}}>
+              <i className="material-icons">
+                slow_motion_video
+              </i>
+            </button>
+        </div>
+        <div className="actions">
+          <button
+            className="action-control"
+            onClick={() => {this.undo()}}>undo</button>
+          <button
+            className="action-control"
+            onClick = {this.save}> Save </button>
+          <button
+            className="action-control"
+            onClick = {this.writeOnCanvas}>Note</button>
+
+        </div>
+
+			  <div id="thumbnailContainer"></div>
 				<button onClick={() => {this.endSession();}}>End session</button>
 				<div></div>
 				<ul>
@@ -287,6 +341,7 @@ export default class Drawing extends React.Component {
       }.bind(this))}
 				</ul>
 			</div>
+      </div>
 
 			)
 	}

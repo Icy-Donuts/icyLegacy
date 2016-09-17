@@ -27526,9 +27526,9 @@
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
-				if (!window.roomName) {
-					window.location.href = '/';
-				}
+				//if (!window.roomName) {
+				//window.location.href = '/';
+				//}
 				var self = this;
 				var canvas = new fabric.Canvas('canvas', {
 					isDrawingMode: true
@@ -27557,8 +27557,8 @@
 
 				socket.on('updateCanvas', function (svg, leftVal) {
 					if (leftVal) {
-						console.log('svg: ', svg.objects);
 						var x = svg;
+						self.state.room.canvas = svg;
 					} else {
 						fabric.util.enlivenObjects([svg], function (objects) {
 							objects.forEach(function (o) {
@@ -27573,6 +27573,20 @@
 					window.location.href = '/';
 				});
 
+				//socket.on('updatechats',function(data){
+				//console.log('Updated chats');
+				//var chatholder = $('#chats')
+				//chatholder.empty();
+				//console.log(data);
+				////console.log(data.chats[window.roomName]);
+				//if(window.roomName in data.chats){
+				//data.chats[window.roomName].forEach(function(chat){
+				//var chat = $('<li>' + chat[0] + ":" + chat[1] + "</li>");
+				//chatholder.append(chat);
+				//})
+				//}
+				//})
+
 				socket.on('updatechats', function (data) {
 					console.log('Updated chats');
 					var chatholder = $('#chats');
@@ -27581,11 +27595,11 @@
 					//console.log(data.chats[window.roomName]);
 					if (window.roomName in data.chats) {
 						data.chats[window.roomName].forEach(function (chat) {
-							var chat = $('<li>' + chat[0] + ":" + chat[1] + "</li>");
+							var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + this.state.username + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
 							chatholder.append(chat);
-						});
+						}.bind(this));
 					}
-				});
+				}.bind(this));
 
 				if (this.state.host) {
 					document.getElementById('video').addEventListener('loadedmetadata', function () {
@@ -27734,110 +27748,141 @@
 					{ className: 'drawingWrapper' },
 					_react2.default.createElement(
 						'div',
-						null,
+						{ id: 'chatsholder' },
+						_react2.default.createElement('ul', { id: 'chats' }),
 						_react2.default.createElement(
-							'h3',
-							null,
-							'Welcome to ',
-							this.state.username[0],
-							'\'s Room!!'
+							'div',
+							{ className: 'chat-input-container' },
+							_react2.default.createElement('textarea', { id: 'chatMessage', className: 'chat-input', placeholder: 'Enter your message' }),
+							_react2.default.createElement(
+								'div',
+								{ className: 'input-button-container' },
+								_react2.default.createElement(
+									'button',
+									{
+										className: 'send-icon',
+										id: 'newChatSubmit', onClick: function onClick() {
+											var chatMessage = $('#chatMessage').val();
+											socket.emit('chatadded', { message: chatMessage, room: window.roomName });
+											$('#chatMessage').val('');
+										} },
+									_react2.default.createElement(
+										'i',
+										{ className: 'material-icons' },
+										'send'
+									)
+								)
+							)
 						)
 					),
 					_react2.default.createElement(
-						'button',
-						{ onClick: function onClick() {
-								_this2.clear();
-							} },
-						'clear'
-					),
-					_react2.default.createElement(
-						'button',
-						{ onClick: function onClick() {
-								_this2.undo();
-							} },
-						'undo'
-					),
-					_react2.default.createElement(
-						'button',
-						{ onClick: function onClick() {
-								var vid = document.getElementById('video');vid.play();socket.emit('play');
-							} },
-						' Play '
-					),
-					_react2.default.createElement(
-						'button',
-						{ onClick: function onClick() {
-								var vid = document.getElementById('video');vid.pause();socket.emit('pause', { room: window.roomName });
-							} },
-						' Pause '
-					),
-					_react2.default.createElement(
-						'button',
-						{ onClick: function onClick() {
-								document.getElementById("video").playbackRate = 0.5;socket.emit('half');
-							} },
-						'Half-speed'
-					),
-					_react2.default.createElement(
-						'button',
-						{ onClick: this.save },
-						' Save '
-					),
-					_react2.default.createElement(
-						'button',
-						{ onClick: this.writeOnCanvas },
-						'Note'
-					),
-					_react2.default.createElement(
 						'div',
-						null,
+						{ className: 'video-container' },
 						_react2.default.createElement(
 							'div',
-							{ id: 'vidcanvasparent' },
-							_react2.default.createElement('div', { id: 'snappedoverlay' }),
-							_react2.default.createElement('video', { id: 'video', src: "/assets/uploads/" + window.roomName, width: '750', height: '750' }),
+							{ className: 'canvas-video-container' },
+							_react2.default.createElement('video', { id: 'video', src: "/assets/uploads/" + 'aaa', width: '750', height: '750' }),
 							_react2.default.createElement('canvas', { id: 'canvas', width: '750', height: '700' })
 						),
 						_react2.default.createElement(
 							'div',
-							{ id: 'chatsholder' },
-							_react2.default.createElement('ul', { id: 'chats' }),
-							_react2.default.createElement('input', { id: 'userNameInput', 'class': 'chatinput', placeholder: 'Enter your username' }),
-							_react2.default.createElement('input', { id: 'chatMessage', 'class': 'chatinput', placeholder: 'Enter your message' }),
+							{ className: 'video-controls-container' },
 							_react2.default.createElement(
 								'button',
-								{ id: 'newChatSubmit', onClick: function onClick() {
-										var username = $('#userNameInput').val();
-										var chatMessage = $('#chatMessage').val();
-										socket.emit('chatadded', { name: username, message: chatMessage, room: window.roomName });
+								{
+									className: 'video-control',
+									onClick: function onClick() {
+										var vid = document.getElementById('video');
+										vid.pause();
+										socket.emit('pause', { room: window.roomName });
 									} },
-								'Submit Chat'
+								_react2.default.createElement(
+									'i',
+									{ className: 'material-icons' },
+									'pause'
+								)
+							),
+							_react2.default.createElement(
+								'button',
+								{
+									className: 'video-control play',
+									onClick: function onClick() {
+										var vid = document.getElementById('video');
+										vid.play();
+										socket.emit('play');
+									} },
+								_react2.default.createElement(
+									'i',
+									{ className: 'material-icons' },
+									'play_arrow'
+								)
+							),
+							_react2.default.createElement(
+								'button',
+								{
+									className: 'video-control',
+									onClick: function onClick() {
+										document.getElementById("video").playbackRate = 0.5;
+										socket.emit('half');
+									} },
+								_react2.default.createElement(
+									'i',
+									{ className: 'material-icons' },
+									'slow_motion_video'
+								)
 							)
 						),
-						_react2.default.createElement('div', { id: 'thumbnailContainer' })
-					),
-					_react2.default.createElement(
-						'button',
-						{ onClick: function onClick() {
-								_this2.endSession();
-							} },
-						'End session'
-					),
-					_react2.default.createElement('div', null),
-					_react2.default.createElement(
-						'ul',
-						null,
-						this.state.username.map(function (user, index) {
-							var _this3 = this;
-
-							return _react2.default.createElement(
-								'li',
-								{ key: index, onClick: function onClick() {
-										_this3.filterUsers(user);
+						_react2.default.createElement(
+							'div',
+							{ className: 'actions' },
+							_react2.default.createElement(
+								'button',
+								{
+									className: 'action-control',
+									onClick: function onClick() {
+										_this2.undo();
 									} },
-								user
-							);
-						}.bind(this))
+								'undo'
+							),
+							_react2.default.createElement(
+								'button',
+								{
+									className: 'action-control',
+									onClick: this.save },
+								' Save '
+							),
+							_react2.default.createElement(
+								'button',
+								{
+									className: 'action-control',
+									onClick: this.writeOnCanvas },
+								'Note'
+							)
+						),
+						_react2.default.createElement('div', { id: 'thumbnailContainer' }),
+						_react2.default.createElement(
+							'button',
+							{ onClick: function onClick() {
+									_this2.endSession();
+								} },
+							'End session'
+						),
+						_react2.default.createElement('div', null),
+						_react2.default.createElement(
+							'ul',
+							null,
+							this.state.username.map(function (user, index) {
+								var _this3 = this;
+
+								return _react2.default.createElement(
+									'li',
+									{ key: index, onClick: function onClick() {
+											_this3.filterUsers(user);
+										} },
+									user
+								);
+							}.bind(this))
+						)
 					)
 				);
 			}
