@@ -5,16 +5,15 @@
 }
 
 .canvas-container {
-  border: 1px solid #000;
-  -moz-box-shadow: 0 0 5px 5px #888;
-  -webkit-box-shadow: 0 0 5px 5px#888;
-  box-shadow: 0px 30px 100px 0px rgba(0, 0, 0, 0.14);
-      position:absolute;
-    top:0;
-    left:0;
-    z-index:2;
+    margin: 0 auto;
 }
 
+
+canvas{
+    position:absolute;
+    left:0;
+    top:0;
+}
 body {
   display: flex;
   min-height: 100vh;
@@ -25,15 +24,6 @@ main {
   flex: 1 0 auto;
 }
 .fake-canvas {
-    min-height: 800px;
-    width: 800px;
-    border: 1px solid #f1f1f1;
-    margin: 0 auto;
-    margin-top: 60px;
-    -moz-box-shadow: 0 0 5px 5px #888;
-    -webkit-box-shadow: 0 0 5px 5px#888;
-    box-shadow: 0px 30px 100px 0px rgba(0, 0, 0, 0.14);
-    padding: 0px;
 }
 
 .logo img {
@@ -292,10 +282,13 @@ h1.results {
 }
 
 video{
-    position:absolute;
-    top:155px;
-    left:140px;
-    border: 5px solid red;
+position: absolute; 
+width: 750px; 
+height: 700px; 
+left: 140px; 
+top: 140px; 
+-webkit-user-select: none; 
+cursor: crosshair;
 }
 
 #createPageButton{
