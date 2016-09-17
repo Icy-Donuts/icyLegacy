@@ -51,75 +51,75 @@ export default class Drawing extends React.Component {
 	}
 
 	componentDidMount() {
-		console.log('file',window.loadedFromFile);
-		if(window.streamer){
+		if(!window.loadedFromFile){
+			if(window.streamer){
 
 
 
-			navigator.getUserMedia = (navigator.getUserMedia || 
-                          navigator.webkitGetUserMedia || 
-                          navigator.mozGetUserMedia || 
-                          navigator.msGetUserMedia);
+				navigator.getUserMedia = (navigator.getUserMedia || 
+	                          navigator.webkitGetUserMedia || 
+	                          navigator.mozGetUserMedia || 
+	                          navigator.msGetUserMedia);
 
-		   if (navigator.getUserMedia) {
-		   	console.log('here');
-		      navigator.getUserMedia(
-		         {
-		            video:true,
-		            audio:false
-		         },        
-		         function(stream) {  
-		          var v= document.getElementById('streamingvideo');	
-		          var url = window.URL || window.webkitURL;
-                  v.src = url ? url.createObjectURL(stream) : stream;
-                  v.play();
+			   if (navigator.getUserMedia) {
+			   	console.log('here');
+			      navigator.getUserMedia(
+			         {
+			            video:true,
+			            audio:false
+			         },        
+			         function(stream) {  
+			          var v= document.getElementById('streamingvideo');	
+			          var url = window.URL || window.webkitURL;
+	                  v.src = url ? url.createObjectURL(stream) : stream;
+	                  v.play();
 
-		          },
-		         function(error) { /* do something */ }
-		      );
-		   }
-		   // else {
-		   //    alert('Sorry, the browser you are using doesn\'t support getUserMedia');
-		   //    return;
-		   //  }
+			          },
+			         function(error) { /* do something */ }
+			      );
+			   }
+			   // else {
+			   //    alert('Sorry, the browser you are using doesn\'t support getUserMedia');
+			   //    return;
+			   //  }
 
 
-		   	var draw = function() {
-		var video = document.querySelector('video');
-		var canvas = document.getElementById('fakecanvas')
-		//console.log('CANVAS',canvas)
-		canvas.width = 280;
-		canvas.height = 260;
-		canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-		//var ctx = document.getElementById('canvas2').getContext('2d')
-   		var dataurl = canvas.toDataURL()
-   		//dataurl = JSON.stringify(dataurl).slice(Math.floor(dataurl.length/3))
-   		// $.ajax({
-   		// 	method:'POST',
-   		// 	url:'http://localhost:3000/posted',
-   		// 	data: {url:dataurl}
-   		// })
-   		socket.emit('picdata',{data:dataurl})
-  // 		drawto(dataurl,ctx)
-   		
-   		   	}
+			   	var draw = function() {
+			var video = document.querySelector('video');
+			var canvas = document.getElementById('fakecanvas')
+			//console.log('CANVAS',canvas)
+			canvas.width = 280;
+			canvas.height = 260;
+			canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+			//var ctx = document.getElementById('canvas2').getContext('2d')
+	   		var dataurl = canvas.toDataURL()
+	   		//dataurl = JSON.stringify(dataurl).slice(Math.floor(dataurl.length/3))
+	   		// $.ajax({
+	   		// 	method:'POST',
+	   		// 	url:'http://localhost:3000/posted',
+	   		// 	data: {url:dataurl}
+	   		// })
+	   		socket.emit('picdata',{data:dataurl})
+	  // 		drawto(dataurl,ctx)
+	   		
+	   		   	}
 
-   	
-   		setInterval(draw,100);
-   		//var ctx = document.getElementById('canvas3').getContext('2d')
-   //		socket.on('broadcast',function(data){drawto(data.data,ctx)})
+	   	
+	   		setInterval(draw,100);
+	   		//var ctx = document.getElementById('canvas3').getContext('2d')
+	   //		socket.on('broadcast',function(data){drawto(data.data,ctx)})
 
-	//	function drawto(url,ctx) {
-	//	    var img = new Image();
-//
-//		    img.setAttribute('crossOrigin', 'anonymous');
-//		    img.onload = function(){
-//		  		ctx.drawImage(img,0,0); // Or at whatever offset you like
-//			};
-//			img.src = url;
+		//	function drawto(url,ctx) {
+		//	    var img = new Image();
+	//
+	//		    img.setAttribute('crossOrigin', 'anonymous');
+	//		    img.onload = function(){
+	//		  		ctx.drawImage(img,0,0); // Or at whatever offset you like
+	//			};
+	//			img.src = url;
 
-//		}
-
+	//		}
+	}
 
 		}
 		//if (!window.roomName) {
