@@ -117,11 +117,10 @@ export default class Drawing extends React.Component {
 			console.log('Updated chats');
 			var chatholder = $('#chats')
 			chatholder.empty();
-			console.log(data);
-			//console.log(data.chats[window.roomName]);
 			if(window.roomName in data.chats){
-				data.chats[window.roomName].forEach(function(chat){
-					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chat[1] + "</span></li>");
+				data.chats[window.roomName].forEach(function(chats){
+					// console.log('chats: ', chats);
+					var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chats[1] + "</span></li>");
 					chatholder.append(chat);
 				}.bind(this))
 			}
@@ -285,7 +284,7 @@ export default class Drawing extends React.Component {
 
       <div className="video-container">
 				<div className="canvas-video-container">
-					<video id = "video" src = {"/assets/uploads/" + 'aaa'} width ="750" height="750"></video>
+					<video id = "video" src = {"/assets/uploads/" + window.roomName} width ="750" height="750"></video>
 					<canvas id="canvas" width="750" height="700" ></canvas>
 				</div>
         <div className="video-controls-container">
