@@ -73,13 +73,19 @@ var paused = {};
 
 io.on('connection', function(socket) {
 
+  socket.on('picdata',function(data){
+   // console.log(data);
+    //console.log(data)
+    io.sockets.emit('broadcast',data);
+  })
+
 
   socket.on('chatadded',function(data){
     var room = data['room'];
     if(!chats[room]){
       chats[room] = [];
     }
-    // console.log(chats[room])
+    console.log(chats[room])
     room = data['room'],name = data.name, message = data.message;
     chats[room].push([name,message]);
     io.to(room).emit('updatechats', {chats:chats});
@@ -112,8 +118,8 @@ io.on('connection', function(socket) {
 
 
 
-  socket.on('createRoom', function (roomname, username) {
-
+  socket.on('createRoom', function (roomname, username,streamer,loadedfromfile) {
+    console.log('STREAMER',streamer);
     var formatedRoomName = roomname.split(' ').join('');
     // rooms[formatedRoomName] = '';
     chats[formatedRoomName] = [];
@@ -126,7 +132,8 @@ io.on('connection', function(socket) {
     rooms[formatedRoomName]['users'] = {};
     rooms[formatedRoomName]['users'][socket.id] = username;
     socket.join(formatedRoomName);
-    socket.emit('enterRoom', formatedRoomName, rooms[formatedRoomName]);
+    console.log('SERVERSIDEFILE',loadedfromfile)
+    socket.emit('enterRoom', formatedRoomName, rooms[formatedRoomName],streamer,loadedfromfile);
     var roomsArr = [];
     for (room in rooms) {
       roomsArr.push(room);

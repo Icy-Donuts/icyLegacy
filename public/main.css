@@ -253,6 +253,7 @@ button {
 }
 #video {
   margin-top: -128px;
+  /*position: absolute;*/
 }
 .canvas-container {
   top: -750px;
@@ -281,4 +282,8 @@ button {
   font-size: 20px;
 }
 
-
+#streamedto{
+  position:absolute;
+  top:32px;
+  z-index:-6;
+}

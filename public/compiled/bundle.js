@@ -27139,12 +27139,15 @@
 	  _createClass(CreateRoom, [{
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
+	      window.loadedFromFile = false;
 	      var idString = '/#' + socket.id;
-	      socket.on('enterRoom', function (roomName, roomObj) {
+	      socket.on('enterRoom', function (roomName, roomObj, streamer, fromfile) {
 	        window.roomName = roomName;
 	        window.canvas = roomObj.canvas;
 	        window.username = roomObj.users;
+	        window.streamer = streamer;
 	        window.host = true;
+	        window.loadedFromFile = fromfile;
 	        window.location.href = '#/drawing';
 	        socket.removeListener('allRooms');
 	      });
@@ -27173,6 +27176,7 @@
 	      });
 	      $('#submitted').on('click', function () {
 	        // console.log('Submitted');
+	        window.loadedFromFile = true;
 	        setInterval(function () {
 	          $('#createPageButton').click();
 	        }, 2000);
@@ -27180,8 +27184,8 @@
 	    }
 	  }, {
 	    key: 'startSession',
-	    value: function startSession(title, username) {
-	      socket.emit('createRoom', title, username);
+	    value: function startSession(title, username, streamer, file) {
+	      socket.emit('createRoom', title, username, streamer, file);
 	      // document.getElementById('roomTitle').value = '';
 	    }
 	  }, {
@@ -27346,14 +27350,17 @@
 	                )
 	              )
 	            ),
-	            _react2.default.createElement('button', {
-	              hidden: true,
-	              id: 'createPageButton',
-	              onClick: function onClick() {
-	                var title = document.getElementById('hostTitle').value;
-	                var username = document.getElementById('username').value;
-	                _this3.startSession(title, username);
-	              } })
+	            _react2.default.createElement(
+	              'button',
+	              {
+	                id: 'createPageButton',
+	                onClick: function onClick() {
+	                  var title = document.getElementById('hostTitle').value;
+	                  var username = document.getElementById('username').value;
+	                  _this3.startSession(title, username, true, window.loadedFromFile);
+	                } },
+	              ' Stream'
+	            )
 	          )
 	        )
 	      );
@@ -27453,6 +27460,90 @@
 		}, {
 			key: 'componentDidMount',
 			value: function componentDidMount() {
+				if (window.loadedFromFile) {
+					$('#streamingvideo').remove();
+				}
+				if (!window.loadedFromFile) {
+					if (window.streamer) {
+						$('#video').css({ position: 'absolute' });
+						navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+						if (navigator.getUserMedia) {
+							console.log('here');
+							navigator.getUserMedia({
+								video: true,
+								audio: false
+							}, function (stream) {
+								var v = document.getElementById('streamingvideo');
+								var url = window.URL || window.webkitURL;
+								v.src = url ? url.createObjectURL(stream) : stream;
+								v.play();
+							}, function (error) {/* do something */});
+						}
+						// else {
+						//    alert('Sorry, the browser you are using doesn\'t support getUserMedia');
+						//    return;
+						//  }
+						var draw = function draw() {
+							var video = document.querySelector('video');
+							var canvas = document.getElementById('fakecanvas');
+							//console.log('CANVAS',canvas)
+							canvas.width = 750;
+							canvas.height = 460;
+							canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+							//var ctx = document.getElementById('canvas2').getContext('2d')
+							var dataurl = canvas.toDataURL();
+							//dataurl = JSON.stringify(dataurl).slice(Math.floor(dataurl.length/3))
+							// $.ajax({
+							// 	method:'POST',
+							// 	url:'http://localhost:3000/posted',
+							// 	data: {url:dataurl}
+							// })
+							socket.emit('picdata', { data: dataurl });
+							// 		drawto(dataurl,ctx)
+						};
+
+						setInterval(draw, 300);
+						//var ctx = document.getElementById('canvas3').getContext('2d')
+						//		socket.on('broadcast',function(data){drawto(data.data,ctx)})
+
+						//	function drawto(url,ctx) {
+						//	    var img = new Image();
+						//
+						//		    img.setAttribute('crossOrigin', 'anonymous');
+						//		    img.onload = function(){
+						//		  		ctx.drawImage(img,0,0); // Or at whatever offset you like
+						//			};
+						//			img.src = url;
+
+						//		}
+						//LOADING FROM FILE logic ends here
+					} else {
+						var ctx;
+
+						(function () {
+							var drawto = function drawto(url, ctx) {
+								//console.log(url);
+								var img = new Image();
+
+								img.setAttribute('crossOrigin', 'anonymous');
+								img.onload = function () {
+									ctx.drawImage(img, 0, 0); // Or at whatever offset you like
+								};
+								img.src = url;
+							};
+
+							alert('YOU ARE NOT THE STREAMER');
+
+							$('#streamingvideo').remove();
+							ctx = document.getElementById('streamedto').getContext('2d');
+
+							socket.on('broadcast', function (data) {
+								drawto(data.data, ctx);
+							});
+						})();
+					}
+				}
 				//if (!window.roomName) {
 				//window.location.href = '/';
 				//}
@@ -27520,61 +27611,62 @@
 					chatholder.empty();
 					if (window.roomName in data.chats) {
 						data.chats[window.roomName].forEach(function (chats) {
-							// console.log('chats: ', chats);
 							var chat = $('<li class="chat-item">' + "<span class='chat-username'>" + chats[0] + ": </span>" + "<span class='chat-text'>" + chats[1] + "</span></li>");
 							chatholder.append(chat);
 						}.bind(this));
 					}
 				}.bind(this));
 
-				if (this.state.host) {
-					document.getElementById('video').addEventListener('loadedmetadata', function () {
-						this.currentTime = 2;this.play();
-					}, false);
+				if (window.loadedFromFile) {
+					if (this.state.host) {
+						document.getElementById('video').addEventListener('loadedmetadata', function () {
+							this.currentTime = 2;this.play();
+						}, false);
 
-					setInterval(function () {
-						var video = document.getElementById('video');
-						var ct = video.currentTime;
-						//console.log(ct);
-						socket.emit('updateTime', { room: window.roomName, time: ct });
-					}, 1000);
-				} else {
-					socket.on('sendStartTime', function (data) {
-						console.log('started');
+						setInterval(function () {
+							var video = document.getElementById('video');
+							var ct = video.currentTime;
+							//console.log(ct);
+							socket.emit('updateTime', { room: window.roomName, time: ct });
+						}, 1000);
+					} else {
+						socket.on('sendStartTime', function (data) {
+							console.log('started');
+							var vid = document.getElementById('video');
+							vid.currentTime = data.time;
+							vid.play();
+							console.log(data.pausedbool);
+							if (data.pausedbool) {
+								vid.pause();
+							}
+						});
+					}
+
+					socket.on('someoneSnapped', function (data) {
+						console.log('Someone has a question');
+						console.log(data.image);
+						//console.log($('#snappedoverlay'));
+						//$('#snappedoverlay').append($(data.image));
+						//document.getElementById('snappedoverlay').appendChild(data.image);
+					});
+
+					socket.on('pauseAll', function (data) {
+						console.log('HEARD PAUSE');
 						var vid = document.getElementById('video');
-						vid.currentTime = data.time;
+						vid.pause();
+					});
+
+					socket.on('playAll', function (data) {
+						console.log('HEARD PLAY');
+						var vid = document.getElementById('video');
 						vid.play();
-						console.log(data.pausedbool);
-						if (data.pausedbool) {
-							vid.pause();
-						}
+					});
+
+					socket.on('halveAll', function () {
+						var vid = document.getElementById('video');
+						vid.playbackRate = 0.5;
 					});
 				}
-
-				socket.on('someoneSnapped', function (data) {
-					console.log('Someone has a question');
-					console.log(data.image);
-					//console.log($('#snappedoverlay'));
-					//$('#snappedoverlay').append($(data.image));
-					//document.getElementById('snappedoverlay').appendChild(data.image);
-				});
-
-				socket.on('pauseAll', function (data) {
-					console.log('HEARD PAUSE');
-					var vid = document.getElementById('video');
-					vid.pause();
-				});
-
-				socket.on('playAll', function (data) {
-					console.log('HEARD PLAY');
-					var vid = document.getElementById('video');
-					vid.play();
-				});
-
-				socket.on('halveAll', function () {
-					var vid = document.getElementById('video');
-					vid.playbackRate = 0.5;
-				});
 			}
 
 			// clear() {
@@ -27708,8 +27800,11 @@
 						_react2.default.createElement(
 							'div',
 							{ className: 'canvas-video-container' },
+							_react2.default.createElement('video', { id: 'streamingvideo' }),
 							_react2.default.createElement('video', { id: 'video', src: "/assets/uploads/" + window.roomName, width: '750', height: '750' }),
-							_react2.default.createElement('canvas', { id: 'canvas', width: '750', height: '700' })
+							_react2.default.createElement('canvas', { id: 'canvas', width: '750', height: '700' }),
+							_react2.default.createElement('canvas', { id: 'streamedto', width: '750', height: '700' }),
+							_react2.default.createElement('canvas', { id: 'fakecanvas', width: '750', height: '700' })
 						),
 						_react2.default.createElement(
 							'div',
