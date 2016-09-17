@@ -27488,7 +27488,7 @@
 							var video = document.querySelector('video');
 							var canvas = document.getElementById('fakecanvas');
 							//console.log('CANVAS',canvas)
-							canvas.width = 480;
+							canvas.width = 750;
 							canvas.height = 460;
 							canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 							//var ctx = document.getElementById('canvas2').getContext('2d')
